@@ -11,14 +11,19 @@ class TecdocManager(models.Manager):
 class Manufacturer(models.Model):
 
     id = models.AutoField(u'Ид', primary_key=True,
-                          db_column='MNF_ID')
-    title = models.AutoField(u'Название', db_column='MNF_BRAND')
+                          db_column='MFA_ID')
+    title = models.CharField(u'Название', max_length=60,
+                             db_column='MFA_BRAND',
+                             blank=True, null=True)
 
     objects = TecdocManager()
 
     class Meta:
          db_table = 'MANUFACTURERS'
          ordering = ['title']
+
+    def __unicode__(self):
+        return self.title
 
 '''$SQL='SELECT MOD_ID, TEX_TEXT AS MOD_CDS_TEXT, MOD_PCON_START, MOD_PCON_END 
 FROM MODELS 
@@ -30,8 +35,10 @@ WHERE MOD_MFA_ID = '.$MFA_ID.' AND MOD_ID = '.$MOD_ID.' AND CDS_LNG_ID = '.$LNG_
 class CarModel(models.Model):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='MOD_ID')
-    production_start = models.CharField('', db_column='MOD_PCON_START')
-    production_end = models.CharField('', db_column='MOD_PCON_END')
+    production_start = models.IntegerField(u'Начало производства',
+                                        db_column='MOD_PCON_START')
+    production_end = models.IntegerField(u'Конец производства',
+                                      db_column='MOD_PCON_END')
 
     objects = TecdocManager()
 
