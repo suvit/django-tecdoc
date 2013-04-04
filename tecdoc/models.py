@@ -46,11 +46,11 @@ class CountryDesignation(models.Model):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='CDS_ID')
 
-    lang = models.ForeighKey(Language,
+    lang = models.ForeignKey(Language,
                              verbose_name=u'Язык',
                              db_column='CDS_LNG_ID')
 
-    description = models.ForeighKey(DESCRIPTION,
+    description = models.ForeignKey(Description,
                                     verbose_name=u'Описание',
                                     db_column='CDS_TEX_ID')
 
@@ -78,7 +78,7 @@ class Manufacturer(models.Model):
         return self.title
 
 
-class CarModelManager(TecdocManager);
+class CarModelManager(TecdocManager):
     def get_models(self, brand, date_min, date_max,
                   search_text=None, lang=tdsettings.LANG_ID):
         query = self.get_query_set()
@@ -95,6 +95,7 @@ class CarModelManager(TecdocManager);
 
         return query
 
+
 class CarModel(models.Model):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='MOD_ID')
@@ -103,11 +104,11 @@ class CarModel(models.Model):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='MOD_PCON_END')
 
-    manufacturer = models.ForeighKey(Manufacturer,
+    manufacturer = models.ForeignKey(Manufacturer,
                                      verbose_name=u'Производитель',
                                      db_column='MOD_MFA_ID')
 
-    country_designation = models.ForeighKey(CountryDesignation,
+    country_designation = models.ForeignKey(CountryDesignation,
                                      verbose_name=u'Обозначение',
                                      db_column='MOD_CDS_ID')
 
