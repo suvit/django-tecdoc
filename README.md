@@ -23,7 +23,7 @@ Add separate db for `tecdoc`
       'tecdoc': {
           'ENGINE': 'django.db.backends.mysql',
           'NAME': 'tecdoc',
-          'HOST': '',
+          'HOST': 'host',
           'USER': 'user',
           'PASSWORD': 'pass',
       }
