@@ -195,16 +195,16 @@ class CarModelManager(TecdocManager):
              pass
 
         if search_text:
-             query.filter(country_designation__description__text__icontains=search_text)
+             query.filter(designation__description__text__icontains=search_text)
 
         return query
 
     def get_models_wp(self, brand, lang=tdsettings.LANG_ID):
         query = self.get_query_set()
         query = query.select_related('manufacturer',
-                                     'country_designation__description')
+                                     'designation__description')
         query = query.filter(manufacturer=brand,
-                             country_designation__lang=lang)
+                             designation__lang=lang)
 
         return query
 
@@ -221,18 +221,22 @@ class CarModel(TecdocModel):
                                      verbose_name=u'Производитель',
                                      db_column='MOD_MFA_ID')
 
-    country_designation = models.ForeignKey(CountryDesignation,
-                                            verbose_name=u'Обозначение',
-                                            db_column='MOD_CDS_ID')
+    designation = models.ForeignKey(CountryDesignation,
+                                    verbose_name=u'Обозначение',
+                                    db_column='MOD_CDS_ID')
 
     objects = CarModelManager()
 
     def __unicode__(self):
+        return u'(%s)%s' % (self.id, self.manufacturer)
+
+
+    def __unicode2__(self):
         return u'(%s)%s - %s' % (self.id, self.manufacturer,
                                  u', '.join(unicode(x) for x in self.get_cd()))
 
     def get_cd(self):
-        return CountryDesignation.objects.filter(id=self.country_designation_id,
+        return CountryDesignation.objects.filter(id=self.designation_id,
                                                  lang=tdsettings.LANG_ID)
 
     class Meta:
@@ -288,9 +292,18 @@ class CarType(TecdocModel):
          db_table = 'TYPES'
          ordering = ['sorting', 'production_start']
 
+    #def __unicode__(self):
+    #    return u'(%s) %s' % (self.id,
+    #                         self.designation)
+
     def __unicode__(self):
-        return u'(%s) %s' % (self.id,
-                             self.designation)
+        return u'(%s)%s - %s' % (self.id, self.model,
+                                 u', '.join(unicode(x) for x in self.get_cd()))
+
+    def get_cd(self):
+        return CountryDesignation.objects.filter(id=self.designation_id,
+                                                 lang=tdsettings.LANG_ID)
+
 
 
 class CarTypeEngine(TecdocModel):
@@ -321,15 +334,26 @@ class CarSection(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='STR_ID')
 
-    parent = models.ForeignKey('self', db_column='STR_PARENT')
+    parent = models.ForeignKey('self', db_column='STR_ID_PARENT',
+                               related_name='children')
+
+    type = models.IntegerField(u'Тип',
+                               db_column='STR_TYPE')
 
     level = models.IntegerField(u'Уровень дерева',
                                 db_column='STR_LEVEL')
 
     designation = models.ForeignKey(Designation,
                                     verbose_name=u'Обозначение',
-                                    db_column='TYP_DES_ID')
+                                    db_column='STR_DES_ID')
 
+    def __unicode__(self):
+        return u'(%s)%s' % (self.id,
+                            u', '.join(unicode(x) for x in self.get_cd()))
+
+    def get_cd(self):
+        return Designation.objects.filter(id=self.designation_id,
+                                          lang=tdsettings.LANG_ID)
 
     objects = TecdocManager()
 
