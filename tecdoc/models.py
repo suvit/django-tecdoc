@@ -55,7 +55,15 @@ class Language(TecdocModel):
          db_table = 'LANGUAGES'
 
 
-class Designation(TecdocModel):
+class DesignationBase(TecdocModel):
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+        return self.description.text
+
+
+class Designation(DesignationBase):
 
     # XXX not a key
     id = models.AutoField(u'Ид', primary_key=True,
@@ -63,6 +71,7 @@ class Designation(TecdocModel):
 
     lang = models.ForeignKey(Language,
                              verbose_name=u'Язык',
+                             related_name='lang_designation',
                              db_column='DES_LNG_ID')
 
     description = models.ForeignKey(Description,
@@ -75,7 +84,7 @@ class Designation(TecdocModel):
          db_table = 'DESIGNATIONS'
 
 
-class CountryDesignation(TecdocModel):
+class CountryDesignation(DesignationBase):
 
     # XXX not a key
     id = models.AutoField(u'Ид', primary_key=True,
@@ -168,7 +177,7 @@ class Supplier(TecdocModel):
     title = models.CharField(u'Название', max_length=60,
                              db_column='SUP_BRAND',
                              blank=True, null=True)
-                             
+
     objects = TecdocManager()
 
     class Meta:
@@ -195,7 +204,7 @@ class CarModelManager(TecdocManager):
         query = query.select_related('manufacturer',
                                      'country_designation__description')
         query = query.filter(manufacturer=brand,
-                             country_designation__language=lang)
+                             country_designation__lang=lang)
 
         return query
 
@@ -213,10 +222,18 @@ class CarModel(TecdocModel):
                                      db_column='MOD_MFA_ID')
 
     country_designation = models.ForeignKey(CountryDesignation,
-                                     verbose_name=u'Обозначение',
-                                     db_column='MOD_CDS_ID')
+                                            verbose_name=u'Обозначение',
+                                            db_column='MOD_CDS_ID')
 
     objects = CarModelManager()
+
+    def __unicode__(self):
+        return u'(%s)%s - %s' % (self.id, self.manufacturer,
+                                 u', '.join(unicode(x) for x in self.get_cd()))
+
+    def get_cd(self):
+        return CountryDesignation.objects.filter(id=self.country_designation_id,
+                                                 lang=tdsettings.LANG_ID)
 
     class Meta:
          db_table = 'MODELS'
@@ -237,13 +254,12 @@ class Engine(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='ENG_PCON_END')
 
-
     objects = TecdocManager()
 
     class Meta:
          db_table = 'ENGINES'
 
-           
+
 class CarType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TYP_ID')
@@ -263,8 +279,8 @@ class CarType(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='TYP_PCON_END')
 
-    engines = models.ManyToMany(Engine, verbose_name=u'Двигатели',
-                                throuth='tecdoc.CarTypeEngine')
+    engines = models.ManyToManyField(Engine, verbose_name=u'Двигатели',
+                                     through='tecdoc.CarTypeEngine')
 
     objects = TecdocManager()
 
@@ -272,12 +288,16 @@ class CarType(TecdocModel):
          db_table = 'TYPES'
          ordering = ['sorting', 'production_start']
 
+    def __unicode__(self):
+        return u'(%s) %s' % (self.id,
+                             self.designation)
+
 
 class CarTypeEngine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='LTE_TYP_ID')
 
-    car_type = models.ForeignKey(CarModel,
+    car_type = models.ForeignKey(CarType,
                                  verbose_name=u'Тип',
                                  db_column='LTE_NR')
 
@@ -300,8 +320,9 @@ class CarSection(TecdocModel):
     # TODO use mptt here
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='STR_ID')
+
     parent = models.ForeignKey('self', db_column='STR_PARENT')
-    
+
     level = models.IntegerField(u'Уровень дерева',
                                 db_column='STR_LEVEL')
 
@@ -319,6 +340,9 @@ class CarSection(TecdocModel):
 class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ART_ID')
+
+    images = models.ManyToManyField('tecdoc.Image', verbose_name=u'Изображения',
+                                    through='tecdoc.PartImage')
 
     objects = TecdocManager()
 
@@ -357,13 +381,13 @@ class PartGenericPart(TecdocModel):
 
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                              db_column='LAG_ART_ID')
- 
+
     generic_part = models.ForeignKey(GenericPart, verbose_name=u'Запчасть',
                                     db_column='LAG_GA_ID')
 
-    supplier = models.ForeignKey(Part, verbose_name=u'Поставщик',
+    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
                                  db_column='LAG_SUP_ID')
-    
+
     class Meta:
          db_table = 'LINK_ART_GA'
 
@@ -400,7 +424,14 @@ class Image(TecdocModel):
     class Meta:
          db_table = 'GRAPHICS'
 
-class PartImage(TecdocModels):
+
+class PartImage(TecdocModel):
+
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+                             db_column='LGA_ART_ID')
+
+    image = models.ForeignKey(Image, verbose_name=u'Изображение',
+                              db_column='LGA_GRA_ID')
 
     objects = TecdocManager()
 
@@ -408,6 +439,13 @@ class PartImage(TecdocModels):
          db_table = 'LINK_GRA_ART'
 
 
-class PdfFile(TecdocModel):
-    objects = TecdocManager()
+class PdfFile(Image):
 
+    class Meta:
+        proxy = True
+
+
+#function LookupByNumber
+#function LookupAnalog
+#function GetPartInfo
+#function GetPropertys
