@@ -36,12 +36,7 @@ class Language(models.Model):
     objects = TecdocManager()
 
 
-class Country(models.Model):
-    objects = TecdocManager()
-
-
 class CountryDesignation(models.Model):
-    objects = TecdocManager()
 
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='CDS_ID')
@@ -53,6 +48,28 @@ class CountryDesignation(models.Model):
     description = models.ForeignKey(Description,
                                     verbose_name=u'Описание',
                                     db_column='CDS_TEX_ID')
+
+    objects = TecdocManager()
+
+
+class Country(models.Model):
+
+    id = models.AutoField(u'Ид', primary_key=True,
+                          db_column='COU_ID')
+
+    iso_code = models.CharField(u'Код ISO2', max_length=6,
+                                db_column='COU_ISO2',
+                                blank=True, null=True)
+
+    designation = models.ForeignKey(CountryDesignation,
+                                    verbose_name=u'Обозначение',
+                                    db_column='COU_DES_ID')
+
+    currency_code = models.CharField(u'Код Валюты', max_length=9,
+                                     db_column='COU_CURRENCY_CODE',
+                                     blank=True, null=True)
+
+    objects = TecdocManager()
 
 
 class Manufacturer(models.Model):
