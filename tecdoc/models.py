@@ -20,7 +20,7 @@ class Description(models.Model):
     objects = TecdocManager()
 
 
-class Language(models.Manager):
+class Language(models.Model):
 
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='LNG_ID')
