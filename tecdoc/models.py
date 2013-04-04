@@ -19,6 +19,9 @@ class Description(models.Model):
 
     objects = TecdocManager()
 
+    class Meta:
+         db_table = 'DES_TEXTS'
+
 
 class Language(models.Model):
 
@@ -35,6 +38,9 @@ class Language(models.Model):
 
     objects = TecdocManager()
 
+    class Meta:
+         db_table = 'LANGUAGES'
+
 
 class CountryDesignation(models.Model):
 
@@ -50,6 +56,9 @@ class CountryDesignation(models.Model):
                                     db_column='CDS_TEX_ID')
 
     objects = TecdocManager()
+
+    class Meta:
+         db_table = 'COUNTRY_DESIGNATIONS'
 
 
 class Country(models.Model):
@@ -70,6 +79,9 @@ class Country(models.Model):
                                      blank=True, null=True)
 
     objects = TecdocManager()
+
+    class Meta:
+         db_table = 'COUNTRIES'
 
 
 class Manufacturer(models.Model):
@@ -98,10 +110,8 @@ class Manufacturer(models.Model):
 class CarModelManager(TecdocManager):
     def get_models(self, brand, date_min, date_max,
                   search_text=None, lang=tdsettings.LANG_ID):
-        query = self.get_query_set()
-        query = query.select_related('manufacturer', 'country_designation')
-        query = query.filter(manufacturer=brand,
-                             country_designation__language=lang)
+
+        query = self.get_models_wp(brand, lang=lang)
 
         if date_min:
              # TODO
@@ -109,6 +119,15 @@ class CarModelManager(TecdocManager):
 
         if search_text:
              query.filter(country_designation__description__text__icontains=search_text)
+
+        return query
+
+    def get_models_wp(self, brand, lang=tdsettings.LANG_ID):
+        query = self.get_query_set()
+        query = query.select_related('manufacturer',
+                                     'country_designation__description')
+        query = query.filter(manufacturer=brand,
+                             country_designation__language=lang)
 
         return query
 
@@ -137,6 +156,19 @@ class CarModel(models.Model):
 class CarType(models.Model):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TYP_ID')
+
+    designation = models.ForeignKey(CountryDesignation,
+                                     verbose_name=u'Обозначение',
+                                     db_column='TYP_CDS_ID')
+
+    model = models.ForeignKey(CarModel,
+                              verbose_name=u'Модель',
+                              db_column='TYP_MOD_ID')
+
+    production_start = models.IntegerField(u'Начало производства',
+                                        db_column='TYP_PCON_START')
+    production_end = models.IntegerField(u'Конец производства',
+                                      db_column='TYP_PCON_END')
 
     objects = TecdocManager()
 
