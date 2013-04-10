@@ -8,7 +8,7 @@ from tecdoc.conf import TecdocConf as tdsettings
 class TecdocManager(models.Manager):
     def get_query_set(self, *args, **kwargs):
         return (super(TecdocManager, self).get_query_set(*args, **kwargs)
-                                          .using('tecdoc')
+                                          .using(tdsettings.DATABASE)
                                           )
 
 class TecdocModel(models.Model):
@@ -391,7 +391,7 @@ class PartGroup(TecdocModel):
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                              db_column='LA_ART_ID')
 
-    global_part = models.ForeignKey(GenericPart,
+    generic_part = models.ForeignKey(GenericPart,
                                     verbose_name=u'Оригинальная? Запчать',
                                     db_column='LA_GA_ID')
     
