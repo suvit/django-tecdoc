@@ -311,7 +311,7 @@ class CarTypeEngine(TecdocModel):
                           db_column='LTE_TYP_ID')
 
     car_type = models.ForeignKey(CarType,
-                                 verbose_name=u'Тип',
+                                 verbose_name=u'Модификация модели',
                                  db_column='LTE_NR')
 
     engine = models.ForeignKey(Engine,
@@ -360,18 +360,43 @@ class CarSection(TecdocModel):
     class Meta:
          db_table = 'SEARCH_TREE'
 
+    def get_parts(self, car_type=None):
+        return Part.objects.filter(generic_parts__sections=self)
+        
+
 
 class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ART_ID')
 
+    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+                                 db_column='ART_SUP_ID')
+
+    designation = models.ForeignKey(Designation,
+                                    verbose_name=u'Обозначение',
+                                    db_column='ART_DES_ID')
+
+    full_designation = models.ForeignKey(Designation,
+                                         verbose_name=u'Полное Обозначение',
+                                         db_column='ART_COMPLETE_DES_ID')
+
+    car_types = models.ManyToManyField('tecdoc.CarType', verbose_name=u'Модификации авто',
+                                        through='tecdoc.PartTypeGroup',
+                                        related_name='parts')
+
+    generic_parts = models.ManyToManyField('tecdoc.GenericPart', verbose_name=u'Оригинальная? запчасть',
+                                           through='tecdoc.PartGroup',
+                                           related_name='parts')
+
     images = models.ManyToManyField('tecdoc.Image', verbose_name=u'Изображения',
-                                    through='tecdoc.PartImage')
+                                    through='tecdoc.PartImage',
+                                    related_name='parts')
 
     objects = TecdocManager()
 
     class Meta:
          db_table = 'ARTICLES'
+
 
 
 class GenericPart(TecdocModel):
@@ -380,8 +405,26 @@ class GenericPart(TecdocModel):
 
     objects = TecdocManager()
 
+    sections = models.ManyToManyField('tecdoc.CarSection', verbose_name=u'Категории',
+                                     through='tecdoc.SectionGenericart',
+                                     related_name='generic_parts')
+
     class Meta:
          db_table = 'GENERIC_ARTICLES'
+
+
+class SectionGenericPart(TecdocModel):
+    car_section = ForeignKey(CarSection, verbose_name=u'Категория',
+                             db_column='LGS_STR_ID')
+
+    generic_part = models.ForeignKey(GenericPart,
+                                   verbose_name=u'Оригинальная? Запчать',
+                                   db_column='LGS_GA_ID')
+
+    objects = TecdocManager()
+
+    class Meta:
+         db_table = 'LINK_GA_STR'
 
 
 class PartGroup(TecdocModel):
@@ -399,6 +442,25 @@ class PartGroup(TecdocModel):
 
     class Meta:
          db_table = 'LINK_ART'
+
+
+class PartTypeGroup(TecdocModel):
+    car_type = models.ForeignKey(CarType, verbose_name=u'Модификация модели',
+                                 db_column='LAT_TYP_ID')
+
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+                             db_column='LAT_LA_ID')
+     
+    generic_part = models.ForeignKey(GenericPart, verbose_name=u'Запчасть',
+                                    db_column='LAT_GA_ID')
+
+    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+                                 db_column='LAT_SUP_ID')
+
+    objects = TecdocManager()
+
+    class Meta:
+         db_table = 'LINK_LA_TYP'
 
 
 class PartGenericPart(TecdocModel):
