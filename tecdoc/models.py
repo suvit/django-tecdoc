@@ -378,7 +378,8 @@ class Part(TecdocModel):
 
     full_designation = models.ForeignKey(Designation,
                                          verbose_name=u'Полное Обозначение',
-                                         db_column='ART_COMPLETE_DES_ID')
+                                         db_column='ART_COMPLETE_DES_ID',
+                                         related_name='parts_with_full_designation')
 
     car_types = models.ManyToManyField('tecdoc.CarType', verbose_name=u'Модификации авто',
                                         through='tecdoc.PartTypeGroup',
@@ -406,7 +407,7 @@ class GenericPart(TecdocModel):
     objects = TecdocManager()
 
     sections = models.ManyToManyField('tecdoc.CarSection', verbose_name=u'Категории',
-                                     through='tecdoc.SectionGenericart',
+                                     through='tecdoc.SectionGenericPart',
                                      related_name='generic_parts')
 
     class Meta:
@@ -414,8 +415,8 @@ class GenericPart(TecdocModel):
 
 
 class SectionGenericPart(TecdocModel):
-    car_section = ForeignKey(CarSection, verbose_name=u'Категория',
-                             db_column='LGS_STR_ID')
+    car_section = models.ForeignKey(CarSection, verbose_name=u'Категория',
+                                    db_column='LGS_STR_ID')
 
     generic_part = models.ForeignKey(GenericPart,
                                    verbose_name=u'Оригинальная? Запчать',
