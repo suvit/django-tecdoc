@@ -334,6 +334,7 @@ class CarTypeEngine(TecdocModel):
 
 class RootSection(object):
     id = None
+    level = 0
 
     def __unicode__(self):
         return u'Корень'
