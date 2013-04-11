@@ -351,12 +351,7 @@ class CarSection(TecdocModel):
                                     db_column='STR_DES_ID')
 
     def __unicode__(self):
-        return u'(%s)%s' % (self.id,
-                            self.get_cd())
-
-    def get_cd(self):
-        return Designation.objects.filter(id=self.designation_id,
-                                          lang=tdsettings.LANG_ID).select_related('description').get()
+        return u'%s' % (self.designation)
 
     objects = TecdocManagerWithDes()
 
@@ -366,16 +361,32 @@ class CarSection(TecdocModel):
     def get_children(self):
         return self.children.all()
 
+    def get_ancestors(self):
+        if self.parent is None:
+            return CarSection.objects.none()
+
+        parents = []
+        parent = self.parent
+        while parent is not None:
+             parents.insert(0, parent.id)
+             parent = parent.parent
+
+        return CarSection.objects.filter(id__in=parents).order_by('level')
+
     def get_parts(self, car_type=None):
-        return Part.objects.filter(generic_parts__sections=self).select_related('supplier',
-                                                                                'designation__description').prefetch_related('images')
+        return (Part.objects.filter(generic_parts__sections=self)
+                            .select_related('supplier',
+                                            'designation__description')
+                            .prefetch_related('images')
+                                 )
 
 
 class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ART_ID')
 
-    title = models.CharField(u'Название', max_length=66, db_column='ART_ARTICLE_NR')
+    title = models.CharField(u'Название', max_length=66,
+                             db_column='ART_ARTICLE_NR')
 
     supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
                                  db_column='ART_SUP_ID')
@@ -390,21 +401,25 @@ class Part(TecdocModel):
                                     verbose_name=u'Обозначение',
                                     db_column='ART_COMPLETE_DES_ID')
                                     
-    car_types = models.ManyToManyField('tecdoc.CarType', verbose_name=u'Модификации авто',
-                                        through='tecdoc.PartTypeGroup',
-                                        related_name='parts')
+    car_types = models.ManyToManyField('tecdoc.CarType',
+                                       verbose_name=u'Модификации авто',
+                                       through='tecdoc.PartTypeGroup',
+                                       related_name='parts')
 
-    generic_parts = models.ManyToManyField('tecdoc.GenericPart', verbose_name=u'Оригинальная? запчасть',
+    generic_parts = models.ManyToManyField('tecdoc.GenericPart',
+                                           verbose_name=u'Оригинальная? запчасть',
                                            through='tecdoc.PartGroup',
                                            related_name='parts')
 
-    images = models.ManyToManyField('tecdoc.Image', verbose_name=u'Изображения',
+    images = models.ManyToManyField('tecdoc.Image',
+                                    verbose_name=u'Изображения',
                                     through='tecdoc.PartImage',
                                     related_name='parts')
 
-    pdfs = models.ManyToManyField('tecdoc.PdfFile', verbose_name=u'Инструкция',
-                                    through='tecdoc.PartPdf',
-                                    related_name='parts') 
+    pdfs = models.ManyToManyField('tecdoc.PdfFile',
+                                  verbose_name=u'Инструкция',
+                                  through='tecdoc.PartPdf',
+                                  related_name='parts') 
 
     objects = TecdocManagerWithDes()
 
@@ -421,9 +436,10 @@ class GenericPart(TecdocModel):
 
     objects = TecdocManager()
 
-    sections = models.ManyToManyField('tecdoc.CarSection', verbose_name=u'Категории',
-                                     through='tecdoc.SectionGenericPart',
-                                     related_name='generic_parts')
+    sections = models.ManyToManyField('tecdoc.CarSection',
+                                      verbose_name=u'Категории',
+                                      through='tecdoc.SectionGenericPart',
+                                      related_name='generic_parts')
 
     class Meta:
         db_table = 'GENERIC_ARTICLES'
@@ -537,11 +553,12 @@ class File(TecdocModel):
 class Image(File):
     class Meta:
         proxy = True
-        
+
     def relative_path(self):
+        ext = self.type.ext.lower()
         return 'images/%s/%s.%s' % (self.section1,
-                                     self.filename,
-                                     'jpg' if self.type.ext == 'jp2' else self.type.ext)
+                                    self.filename,
+                                    ext == 'jp2' and 'jpg' or ext)
 
 class PartImage(TecdocModel):
 
