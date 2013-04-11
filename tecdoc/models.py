@@ -302,18 +302,11 @@ class CarType(TecdocModel):
         db_table = 'TYPES'
         ordering = ['sorting', 'production_start']
 
-    #def __unicode__(self):
-    #    return u'(%s) %s' % (self.id,
-    #                         self.designation)
-
     def __unicode__(self):
-        return u'(%s)%s - %s' % (self.id, self.model,
-                                 u', '.join(unicode(x) for x in self.get_cd()))
-
-    def get_cd(self):
-        return CountryDesignation.objects.filter(id=self.designation_id,
-                                                 lang=tdsettings.LANG_ID)
-
+        return u'(%s)%s %s (%s-%s)' % (self.id, self.model,
+                                       self.designation,
+                                       self.production_start, self.production_end
+                                      )
 
 
 class CarTypeEngine(TecdocModel):
@@ -419,11 +412,7 @@ class Part(TecdocModel):
         db_table = 'ARTICLES'
 
     def __unicode__(self):
-        return u'%s %s' % (self.get_cd(), self.title)
-
-    def get_cd(self):
-        return Designation.objects.filter(id=self.designation_id,
-                                          lang=tdsettings.LANG_ID).select_related('description').get()
+        return u'%s %s' % (self.designation, self.title)
 
 
 class GenericPart(TecdocModel):
