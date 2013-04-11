@@ -9,7 +9,7 @@ class TecdocManager(models.Manager):
     def get_query_set(self, *args, **kwargs):
         return (super(TecdocManager, self).get_query_set(*args, **kwargs)
                                           .using(tdsettings.DATABASE)
-                                          )
+                                               )
 
 class TecdocModel(models.Model):
  
@@ -55,8 +55,18 @@ class Language(TecdocModel):
         db_table = 'LANGUAGES'
 
 
+class DesignationManager(TecdocManager):
+    def get_query_set(self, *args, **kwargs):
+        return (super(DesignationManager, self).get_query_set(*args, **kwargs)
+                                               .select_related('description')
+                                               .filter(lang=tdsettings.LANG_ID)
+                                               )
+
 
 class DesignationBase(TecdocModel):
+
+    objects = DesignationManager()
+
     class Meta:
         abstract = True
 
@@ -70,6 +80,7 @@ class TecdocManagerWithDes(TecdocManager):
                                                  .select_related('designation__description')
                                                  .filter(designation__lang=tdsettings.LANG_ID)
                                           )
+
 
 class Designation(DesignationBase):
 
@@ -86,7 +97,7 @@ class Designation(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='DES_TEX_ID')
 
-    objects = TecdocManager()
+    objects = DesignationManager()
 
     class Meta:
         db_table = 'DESIGNATIONS'
@@ -106,7 +117,7 @@ class CountryDesignation(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='CDS_TEX_ID')
 
-    objects = TecdocManager()
+    objects = DesignationManager()
 
     class Meta:
         db_table = 'COUNTRY_DESIGNATIONS'
@@ -129,7 +140,7 @@ class Country(TecdocModel):
                                      db_column='COU_CURRENCY_CODE',
                                      blank=True, null=True)
 
-    objects = TecdocManager()
+    objects = TecdocManagerWithDes()
 
     class Meta:
         db_table = 'COUNTRIES'
@@ -195,11 +206,11 @@ class Supplier(TecdocModel):
         return self.title
 
 
-class CarModelManager(TecdocManager):
+class CarModelManager(TecdocManagerWithDes):
     def get_models(self, brand, date_min, date_max,
-                  search_text=None, lang=tdsettings.LANG_ID):
+                   search_text=None):
 
-        query = self.get_models_wp(brand, lang=lang)
+        query = self.get_models_wp(brand)
 
         if date_min:
              # TODO
@@ -210,12 +221,9 @@ class CarModelManager(TecdocManager):
 
         return query
 
-    def get_models_wp(self, brand, lang=tdsettings.LANG_ID):
+    def get_models_wp(self, brand):
         query = self.get_query_set()
-        query = query.select_related('manufacturer',
-                                     'designation__description')
-        query = query.filter(manufacturer=brand,
-                             designation__lang=lang)
+        query = query.select_related('manufacturer').filter(manufacturer=brand).distinct()
 
         return query
 
@@ -239,7 +247,7 @@ class CarModel(TecdocModel):
     objects = CarModelManager()
 
     def __unicode__(self):
-        return u'(%s)%s' % (self.id, self.manufacturer)
+        return u'(%s)%s %s' % (self.id, self.manufacturer, self.get_cd())
 
 
     def __unicode2__(self):
@@ -297,7 +305,7 @@ class CarType(TecdocModel):
     engines = models.ManyToManyField(Engine, verbose_name=u'Двигатели',
                                      through='tecdoc.CarTypeEngine')
 
-    objects = TecdocManager()
+    objects = TecdocManagerWithDes()
 
     class Meta:
         db_table = 'TYPES'
@@ -375,7 +383,7 @@ class CarSection(TecdocModel):
         return self.children.all()
 
     def get_parts(self, car_type=None):
-        return Part.objects.filter(generic_parts__sections=self).distinct().select_related('supplier').prefetch_related('images')
+        return Part.objects.filter(generic_parts__sections=self).select_related('supplier').prefetch_related('images')
 
 
 class Part(TecdocModel):
@@ -409,17 +417,21 @@ class Part(TecdocModel):
                                     through='tecdoc.PartImage',
                                     related_name='parts')
 
+    pdfs = models.ManyToManyField('tecdoc.PdfFile', verbose_name=u'Инструкция',
+                                    through='tecdoc.PartPdf',
+                                    related_name='parts') 
+
     objects = TecdocManagerWithDes()
 
     class Meta:
         db_table = 'ARTICLES'
 
     def __unicode__(self):
-        return '(%s)%s %s' % (self.id, u', '.join(unicode(x) for x in self.get_cd()), self.title)
+        return u'%s %s' % (self.get_cd(), self.title)
 
     def get_cd(self):
         return Designation.objects.filter(id=self.designation_id,
-                                          lang=tdsettings.LANG_ID).select_related('description')
+                                          lang=tdsettings.LANG_ID).select_related('description').get()
 
 
 class GenericPart(TecdocModel):
@@ -529,7 +541,7 @@ class File(TecdocModel):
 
     section1 = models.IntegerField(u'Категория 1', db_column='GRA_TAB_NR')
 
-    filename = models.IntegerField(u'Категория 2', db_column='GRA_GRD_ID')
+    filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
 
 
     objects = TecdocManager()
@@ -571,6 +583,20 @@ class PdfFile(File):
 
     def relative_path(self):
         return '/pdf/000%s.pdf' % (self.filename,)
+
+class PartPdf(TecdocModel):
+
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+                             db_column='LGA_ART_ID')
+
+    image = models.ForeignKey(PdfFile, verbose_name=u'Изображение',
+                              db_column='LGA_GRA_ID')
+
+    objects = TecdocManager()
+
+    class Meta:
+        db_table = 'LINK_GRA_ART'
+
 
 #function LookupByNumber
 #function LookupAnalog
