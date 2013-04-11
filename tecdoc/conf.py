@@ -12,3 +12,6 @@ class TecdocConf(AppConf):
 
     LANG_ID = RU_LANG
     APP_ROOT = '.'
+
+    # Host for generation absolute path for images and pdf
+    FILE_HOST = 'http://server/'
