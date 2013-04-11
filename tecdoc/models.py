@@ -412,7 +412,7 @@ class Part(TecdocModel):
         db_table = 'ARTICLES'
 
     def __unicode__(self):
-        return u'%s %s' % (self.designation, self.title)
+        return u'%s %s %s' % (self.designation, self.supplier, self.title)
 
 
 class GenericPart(TecdocModel):
