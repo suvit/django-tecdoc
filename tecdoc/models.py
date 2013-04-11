@@ -58,8 +58,8 @@ class Language(TecdocModel):
 class DesignationManager(TecdocManager):
     def get_query_set(self, *args, **kwargs):
         return (super(DesignationManager, self).get_query_set(*args, **kwargs)
-                                               .select_related('description')
                                                .filter(lang=tdsettings.LANG_ID)
+                                               .select_related('description')
                                                )
 
 
@@ -77,9 +77,8 @@ class DesignationBase(TecdocModel):
 class TecdocManagerWithDes(TecdocManager):
     def get_query_set(self, *args, **kwargs):
         return (super(TecdocManagerWithDes, self).get_query_set(*args, **kwargs)
-                                                 .select_related('designation__description')
                                                  .filter(designation__lang=tdsettings.LANG_ID)
-                                          )
+                                                 .select_related('designation__description')                                          )
 
 
 class Designation(DesignationBase):
@@ -207,23 +206,22 @@ class Supplier(TecdocModel):
 
 
 class CarModelManager(TecdocManagerWithDes):
-    def get_models(self, brand, date_min, date_max,
+
+    def get_models(self, manufacturer, date_min=None, date_max=None,
                    search_text=None):
 
-        query = self.get_models_wp(brand)
+        query = self.get_query_set()
+        query = query.select_related('manufacturer', 'designation__description').filter(manufacturer=manufacturer)
 
         if date_min:
              # TODO
              pass
 
+        if date_max:
+             pass
+
         if search_text:
              query.filter(designation__description__text__icontains=search_text)
-
-        return query
-
-    def get_models_wp(self, brand):
-        query = self.get_query_set()
-        query = query.select_related('manufacturer').filter(manufacturer=brand).distinct()
 
         return query
 
@@ -247,16 +245,9 @@ class CarModel(TecdocModel):
     objects = CarModelManager()
 
     def __unicode__(self):
-        return u'(%s)%s %s' % (self.id, self.manufacturer, self.get_cd())
-
-
-    def __unicode2__(self):
-        return u'(%s)%s - %s' % (self.id, self.manufacturer,
-                                 u', '.join(unicode(x) for x in self.get_cd()))
-
-    def get_cd(self):
-        return CountryDesignation.objects.filter(id=self.designation_id,
-                                                 lang=tdsettings.LANG_ID)
+        return u'%s %s (%s-%s)' % (self.manufacturer,
+                                       self.designation,
+                                       self.production_start, self.production_end)
 
     class Meta:
         db_table = 'MODELS'
