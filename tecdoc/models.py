@@ -374,7 +374,8 @@ class CarSection(TecdocModel):
         return self.children.all()
 
     def get_parts(self, car_type=None):
-        return Part.objects.filter(generic_parts__sections=self).select_related('supplier').prefetch_related('images')
+        return Part.objects.filter(generic_parts__sections=self).select_related('supplier',
+                                                                                'designation__description').prefetch_related('images')
 
 
 class Part(TecdocModel):
