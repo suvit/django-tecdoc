@@ -332,6 +332,22 @@ class CarTypeEngine(TecdocModel):
         db_table = 'LINK_TYP_ENG'
 
 
+class RootSection(object):
+    id = None
+
+    def __unicode__(self):
+        return u'Корень'
+
+    def get_parts(self):
+        return Part.objects.all()
+
+    def get_children(self):
+        return CarSection.objects.filter(parent__isnull=True)
+
+    def get_ancestors(self):
+        return CarSection.objects.none()
+
+
 class CarSection(TecdocModel):
     # TODO use mptt here
     id = models.AutoField(u'Ид', primary_key=True,
@@ -365,10 +381,10 @@ class CarSection(TecdocModel):
         if self.parent is None:
             return CarSection.objects.none()
 
-        parents = []
-        parent = self.parent
-        while parent is not None:
-             parents.insert(0, parent.id)
+        parents = list()
+        parent = self
+        while parent.parent_id is not None:
+             parents.insert(0, parent.parent_id)
              parent = parent.parent
 
         return CarSection.objects.filter(id__in=parents).order_by('level')
