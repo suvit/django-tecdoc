@@ -35,8 +35,6 @@ class Description(TecdocModel):
                           db_column='TEX_ID')
     text = models.TextField(u'Текст', db_column='TEX_TEXT')
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'DES_TEXTS'
 
@@ -58,8 +56,6 @@ class Language(TecdocModel):
     codepage = models.CharField(u'Кодировка', max_length=30,
                                 db_column='LNG_CODEPAGE',
                                 blank=True, null=True)
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'LANGUAGES'
@@ -106,8 +102,6 @@ class Designation(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='DES_TEX_ID')
 
-    objects = DesignationManager()
-
     class Meta:
         db_table = 'DESIGNATIONS'
 
@@ -125,8 +119,6 @@ class CountryDesignation(DesignationBase):
     description = models.ForeignKey(Description,
                                     verbose_name=u'Описание',
                                     db_column='CDS_TEX_ID')
-
-    objects = DesignationManager()
 
     class Meta:
         db_table = 'COUNTRY_DESIGNATIONS'
@@ -168,8 +160,6 @@ class Brand(TecdocModel):
                              db_column='BRA_MFC_CODE',
                              blank=True, null=True)
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'BRANDS'
         ordering = ['title']
@@ -188,8 +178,6 @@ class Manufacturer(TecdocModel):
                              db_column='MFA_MFC_CODE',
                              blank=True, null=True)
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'MANUFACTURERS'
         ordering = ['title']
@@ -205,8 +193,6 @@ class Supplier(TecdocModel):
     title = models.CharField(u'Название', max_length=60,
                              db_column='SUP_BRAND',
                              blank=True, null=True)
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'SUPPLIERS'
@@ -278,8 +264,6 @@ class Engine(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='ENG_PCON_END')
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'ENGINES'
 
@@ -335,8 +319,6 @@ class CarTypeEngine(TecdocModel):
                                         db_column='LTE_PCON_START')
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='LTE_PCON_END')
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'LINK_TYP_ENG'
@@ -480,8 +462,6 @@ class SectionGenericPart(TecdocModel):
                                    verbose_name=u'Оригинальная? Запчать',
                                    db_column='LGS_GA_ID')
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'LINK_GA_STR'
 
@@ -496,8 +476,6 @@ class PartGroup(TecdocModel):
     generic_part = models.ForeignKey(GenericPart,
                                     verbose_name=u'Оригинальная? Запчать',
                                     db_column='LA_GA_ID')
-    
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'LINK_ART'
@@ -515,8 +493,6 @@ class PartTypeGroup(TecdocModel):
 
     supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
                                  db_column='LAT_SUP_ID')
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'LINK_LA_TYP'
@@ -550,8 +526,6 @@ class FileType(TecdocModel):
 
     ext = models.CharField(max_length=9, db_column='DOC_EXTENSION')
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'DOC_TYPES'
 
@@ -566,9 +540,6 @@ class File(TecdocModel):
     section1 = models.IntegerField(u'Категория 1', db_column='GRA_TAB_NR')
 
     filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
-
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'GRAPHICS'
@@ -595,8 +566,6 @@ class PartImage(TecdocModel):
     image = models.ForeignKey(Image, verbose_name=u'Изображение',
                               db_column='LGA_GRA_ID')
 
-    objects = TecdocManager()
-
     class Meta:
         db_table = 'LINK_GRA_ART'
 
@@ -616,8 +585,6 @@ class PartPdf(TecdocModel):
 
     image = models.ForeignKey(PdfFile, verbose_name=u'Изображение',
                               db_column='LGA_GRA_ID')
-
-    objects = TecdocManager()
 
     class Meta:
         db_table = 'LINK_GRA_ART'
