@@ -3,29 +3,29 @@
 from base import TecdocModel, TecdocManager
 
 class Criteria(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='CRI_ID')
 
     designation = models.ForeignKey(Designation,
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='CRI_DES_ID')
 
     short_designation = models.ForeignKey(Designation,
-                                          verbose_name=u'ä‡†‚™Æ• é°Æß≠†Á•≠®•',
+                                          verbose_name=u'–ö—Ä–∞—Ç–∫–æ–µ –û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                           db_column='CRI_SHORT_DES_ID',
                                           related_name='+')
 
     unit = models.ForeignKey(Designation,
-                             verbose_name=u'ìØ†™Æ¢™†',
+                             verbose_name=u'–£–ø–∞–∫–æ–≤–∫–∞',
                              db_column='CRI_UNIT_DES_ID')
 
-    type = models.CharField(u'í®Ø', max_length=1,
+    type = models.CharField(u'–¢–∏–ø', max_length=1,
                             db_column='CRI_TYPE')
 
-    is_interval = models.BooleanField(u'à≠‚•‡¢†´Ï≠Î©',
+    is_interval = models.BooleanField(u'–ò–Ω—Ç–µ—Ä–≤–∞–ª—å–Ω—ã–π',
                                       db_column='CRI_IS_INTERVAL')
 
-    child = models.ForeignKey(u'Ç‚Æ‡Æ© ™‡®‚•‡®©',
+    child = models.ForeignKey(u'–í—Ç–æ—Ä–æ–π –∫—Ä–∏—Ç–µ—Ä–∏–π',
                               db_column='CRI_SUCCESSOR',
                               related_name='parents')
 
@@ -36,23 +36,23 @@ class Criteria(TecdocModel):
 
 
 class PartCriteria(TecdocModel):
-    part = models.ForeignKey(Part, verbose_name=u'á†ØÁ†·‚Ï',
+    part = models.ForeignKey(Part, verbose_name=u'–ó–∞–ø—á–∞—Å—Ç—å',
                              db_column='ACR_ART_ID')
 
-    group = models.ForeignKey(Group, verbose_name=u'É‡„ØØ† á†ØÁ†·‚•©',
+    group = models.ForeignKey(Group, verbose_name=u'–ì—Ä—É–ø–ø–∞ –ó–∞–ø—á–∞—Å—Ç–µ–π',
                               db_column='ACR_GA_ID')
 
-    criteria = models.ForeignKey(Criteria, verbose_name=u'á†ØÁ†·‚Ï',
+    criteria = models.ForeignKey(Criteria, verbose_name=u'–ó–∞–ø—á–∞—Å—Ç—å',
                                  db_column='ACR_CRI_ID')
 
-    value = models.CharField(u'á≠†Á•≠®•', max_length=60,
+    value = models.CharField(u'–ó–Ω–∞—á–µ–Ω–∏–µ', max_length=60,
                              db_column='ACR_VALUE')
 
     description = models.ForeignKey(Designation,
-                                    verbose_name=u'éØ®·†≠®•',
+                                    verbose_name=u'–û–ø–∏—Å–∞–Ω–∏–µ',
                                     db_column='ACR_KV_DES_ID')
 
-    sorting = models.IntegerField(u'èÆ‡Ô§Æ™', db_column='ACR_SORT')
+    sorting = models.IntegerField(u'–ü–æ—Ä—è–¥–æ–∫', db_column='ACR_SORT')
 
     class Meta:
         db_table = 'ARTICLE_CRITERIA'

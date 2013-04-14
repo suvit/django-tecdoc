@@ -3,7 +3,7 @@
 from base import TecdocModel, TecdocManager
 
 class FileType(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='DOC_TYPE')
 
     ext = models.CharField(max_length=9, db_column='DOC_EXTENSION')
@@ -13,15 +13,15 @@ class FileType(TecdocModel):
 
 
 class File(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='GRA_ID')
 
-    type = models.ForeignKey(FileType, verbose_name=u'í®Ø',
+    type = models.ForeignKey(FileType, verbose_name=u'–¢–∏–ø',
                              db_column='GRA_DOC_TYPE')
 
-    db_number = models.IntegerField(u'ä†‚•£Æ‡®Ô 1', db_column='GRA_TAB_NR')
+    db_number = models.IntegerField(u'–ö–∞—Ç–µ–≥–æ—Ä–∏—è 1', db_column='GRA_TAB_NR')
 
-    filename = models.IntegerField(u'à¨Ô ‰†©´†', db_column='GRA_GRD_ID')
+    filename = models.IntegerField(u'–ò–º—è —Ñ–∞–π–ª–∞', db_column='GRA_GRD_ID')
 
     class Meta:
         db_table = 'GRAPHICS'
@@ -43,10 +43,10 @@ class Image(File):
 
 class PartImage(TecdocModel):
 
-    part = models.ForeignKey(Part, verbose_name=u'á†ØÁ†·‚Ï',
+    part = models.ForeignKey(Part, verbose_name=u'–ó–∞–ø—á–∞—Å—Ç—å',
                              db_column='LGA_ART_ID')
 
-    image = models.ForeignKey(Image, verbose_name=u'àßÆ°‡†¶•≠®•',
+    image = models.ForeignKey(Image, verbose_name=u'–ò–∑–æ–±—Ä–∞–∂–µ–Ω–∏–µ',
                               db_column='LGA_GRA_ID')
 
     class Meta:
@@ -64,10 +64,10 @@ class PdfFile(File):
 
 class PartPdf(TecdocModel):
 
-    part = models.ForeignKey(Part, verbose_name=u'á†ØÁ†·‚Ï',
+    part = models.ForeignKey(Part, verbose_name=u'–ó–∞–ø—á–∞—Å—Ç—å',
                              db_column='LGA_ART_ID')
 
-    image = models.ForeignKey(PdfFile, verbose_name=u'àßÆ°‡†¶•≠®•',
+    image = models.ForeignKey(PdfFile, verbose_name=u'–ò–∑–æ–±—Ä–∞–∂–µ–Ω–∏–µ',
                               db_column='LGA_GRA_ID')
 
     class Meta:

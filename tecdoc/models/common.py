@@ -8,18 +8,18 @@ from tecdoc.conf import TecdocConf as tdsettings
 
 class Country(TecdocModel):
 
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='COU_ID')
 
-    iso_code = models.CharField(u'äÆ§ ISO2', max_length=6,
+    iso_code = models.CharField(u'–ö–æ–¥ ISO2', max_length=6,
                                 db_column='COU_ISO2',
                                 blank=True, null=True)
 
     designation = models.ForeignKey(CountryDesignation,
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='COU_DES_ID')
 
-    currency_code = models.CharField(u'äÆ§ Ç†´Ó‚Î', max_length=9,
+    currency_code = models.CharField(u'–ö–æ–¥ –í–∞–ª—é—Ç—ã', max_length=9,
                                      db_column='COU_CURRENCY_CODE',
                                      blank=True, null=True)
 
@@ -31,14 +31,14 @@ class Country(TecdocModel):
 
 class Brand(TecdocModel):
 
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='BRA_ID')
 
-    title = models.CharField(u'ç†ß¢†≠®•', max_length=60,
+    title = models.CharField(u'–ù–∞–∑–≤–∞–Ω–∏–µ', max_length=60,
                              db_column='BRA_BRAND',
                              blank=True, null=True)
 
-    code = models.CharField(u'ç†ß¢†≠®•', max_length=30,
+    code = models.CharField(u'–ù–∞–∑–≤–∞–Ω–∏–µ', max_length=30,
                              db_column='BRA_MFC_CODE',
                              blank=True, null=True)
 
@@ -49,14 +49,14 @@ class Brand(TecdocModel):
 
 class Manufacturer(TecdocModel):
 
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='MFA_ID')
 
-    title = models.CharField(u'ç†ß¢†≠®•', max_length=60,
+    title = models.CharField(u'–ù–∞–∑–≤–∞–Ω–∏–µ', max_length=60,
                              db_column='MFA_BRAND',
                              blank=True, null=True)
 
-    code = models.CharField(u'ç†ß¢†≠®•', max_length=30,
+    code = models.CharField(u'–ù–∞–∑–≤–∞–Ω–∏–µ', max_length=30,
                              db_column='MFA_MFC_CODE',
                              blank=True, null=True)
 
@@ -69,10 +69,10 @@ class Manufacturer(TecdocModel):
 
 
 class Supplier(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='SUP_ID')
 
-    title = models.CharField(u'ç†ß¢†≠®•', max_length=60,
+    title = models.CharField(u'–ù–∞–∑–≤–∞–Ω–∏–µ', max_length=60,
                              db_column='SUP_BRAND',
                              blank=True, null=True)
 

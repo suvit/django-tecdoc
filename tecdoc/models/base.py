@@ -32,9 +32,9 @@ class TecdocModel(models.Model):
 
 
 class Description(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='TEX_ID')
-    text = models.TextField(u'í•™·‚', db_column='TEX_TEXT')
+    text = models.TextField(u'–¢–µ–∫—Å—Ç', db_column='TEX_TEXT')
 
     class Meta:
         db_table = 'DES_TEXTS'
@@ -42,10 +42,10 @@ class Description(TecdocModel):
 
 
 class Text(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='TMT_ID')
 
-    text = models.TextField(u'í•™·‚', db_column='TMT_TEXT')
+    text = models.TextField(u'–¢–µ–∫—Å—Ç', db_column='TMT_TEXT')
 
     class Meta:
         db_table = 'TEXT_MODULE_TEXT'
@@ -53,19 +53,19 @@ class Text(TecdocModel):
 
 class Language(TecdocModel):
 
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='LNG_ID')
 
     designation = models.ForeignKey('tecdoc.Designation',
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='LNG_DES_ID',
                                     blank=True, null=True) 
 
-    iso_code = models.CharField(u'äÆ§ ISO2', max_length=6,
+    iso_code = models.CharField(u'–ö–æ–¥ ISO2', max_length=6,
                                 db_column='LNG_ISO2',
                                 blank=True, null=True)
 
-    codepage = models.CharField(u'äÆ§®‡Æ¢™†', max_length=30,
+    codepage = models.CharField(u'–ö–æ–¥–∏—Ä–æ–≤–∫–∞', max_length=30,
                                 db_column='LNG_CODEPAGE',
                                 blank=True, null=True)
 
@@ -94,16 +94,16 @@ class DesignationBase(TecdocModel):
 
 class TextLanguage(DesignationBase):
     # XXX not a key
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='TMO_ID')
 
     lang = models.ForeignKey(Language,
-                             verbose_name=u'üßÎ™',
+                             verbose_name=u'–Ø–∑—ã–∫',
                              related_name='lang_designation',
                              db_column='TMO_LNG_ID')
 
     description = models.ForeignKey(Text,
-                                    verbose_name=u'éØ®·†≠®•',
+                                    verbose_name=u'–û–ø–∏—Å–∞–Ω–∏–µ',
                                     db_column='TMO_TMT_ID')
 
     class Meta:
@@ -120,16 +120,16 @@ class TecdocManagerWithDes(TecdocManager):
 class Designation(DesignationBase):
 
     # XXX not a key
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='DES_ID')
 
     lang = models.ForeignKey(Language,
-                             verbose_name=u'üßÎ™',
+                             verbose_name=u'–Ø–∑—ã–∫',
                              related_name='lang_designation',
                              db_column='DES_LNG_ID')
 
     description = models.ForeignKey(Description,
-                                    verbose_name=u'éØ®·†≠®•',
+                                    verbose_name=u'–û–ø–∏—Å–∞–Ω–∏–µ',
                                     db_column='DES_TEX_ID')
 
     class Meta:
@@ -139,15 +139,15 @@ class Designation(DesignationBase):
 class CountryDesignation(DesignationBase):
 
     # XXX not a key
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='CDS_ID')
 
     lang = models.ForeignKey(Language,
-                             verbose_name=u'üßÎ™',
+                             verbose_name=u'–Ø–∑—ã–∫',
                              db_column='CDS_LNG_ID')
 
     description = models.ForeignKey(Description,
-                                    verbose_name=u'éØ®·†≠®•',
+                                    verbose_name=u'–û–ø–∏—Å–∞–Ω–∏–µ',
                                     db_column='CDS_TEX_ID')
 
     class Meta:

@@ -8,7 +8,7 @@ class RootSection(object):
     level = 0
 
     def __unicode__(self):
-        return u'äÆ‡•≠Ï'
+        return u'–ö–æ—Ä–µ–Ω—å'
 
     def get_parts(self):
         return Part.objects.all()
@@ -22,20 +22,20 @@ class RootSection(object):
 
 class CarSection(TecdocModel):
     # TODO use mptt here
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='STR_ID')
 
     parent = models.ForeignKey('self', db_column='STR_ID_PARENT',
                                related_name='children')
 
-    type = models.IntegerField(u'í®Ø',
+    type = models.IntegerField(u'–¢–∏–ø',
                                db_column='STR_TYPE')
 
-    level = models.IntegerField(u'ì‡Æ¢•≠Ï §•‡•¢†',
+    level = models.IntegerField(u'–£—Ä–æ–≤–µ–Ω—å –¥–µ—Ä–µ–≤–∞',
                                 db_column='STR_LEVEL')
 
     designation = models.ForeignKey(Designation,
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='STR_DES_ID')
 
     def __unicode__(self):
@@ -105,5 +105,3 @@ class CarSection(TecdocModel):
         query = Part.objects.filter(id=part_id)
 
         query = query.select_related('criteries')
-
-

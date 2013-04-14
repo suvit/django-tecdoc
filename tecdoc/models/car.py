@@ -26,19 +26,19 @@ class CarModelManager(TecdocManagerWithDes):
 
 
 class CarModel(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='MOD_ID')
-    production_start = models.IntegerField(u'ç†Á†´Æ Ø‡Æ®ß¢Æ§·‚¢†',
+    production_start = models.IntegerField(u'–ù–∞—á–∞–ª–æ –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                         db_column='MOD_PCON_START')
-    production_end = models.IntegerField(u'äÆ≠•Ê Ø‡Æ®ß¢Æ§·‚¢†',
+    production_end = models.IntegerField(u'–ö–æ–Ω–µ—Ü –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                       db_column='MOD_PCON_END')
 
     manufacturer = models.ForeignKey(Manufacturer,
-                                     verbose_name=u'è‡Æ®ß¢Æ§®‚•´Ï',
+                                     verbose_name=u'–ü—Ä–æ–∏–∑–≤–æ–¥–∏—Ç–µ–ª—å',
                                      db_column='MOD_MFA_ID')
 
     designation = models.ForeignKey(CountryDesignation,
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='MOD_CDS_ID')
 
     objects = CarModelManager()
@@ -53,18 +53,18 @@ class CarModel(TecdocModel):
 
 
 class Engine(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='ENG_ID')
 
     manufacturer = models.ForeignKey(Manufacturer,
-                                     verbose_name=u'è‡Æ®ß¢Æ§®‚•´Ï',
+                                     verbose_name=u'–ü—Ä–æ–∏–∑–≤–æ–¥–∏—Ç–µ–ª—å',
                                      db_column='ENG_MFA_ID')
 
-    code = models.CharField(u'äÆ§', max_length=180, db_column='ENG_CODE')
+    code = models.CharField(u'–ö–æ–¥', max_length=180, db_column='ENG_CODE')
 
-    production_start = models.IntegerField(u'ç†Á†´Æ Ø‡Æ®ß¢Æ§·‚¢†',
+    production_start = models.IntegerField(u'–ù–∞—á–∞–ª–æ –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                         db_column='ENG_PCON_START')
-    production_end = models.IntegerField(u'äÆ≠•Ê Ø‡Æ®ß¢Æ§·‚¢†',
+    production_end = models.IntegerField(u'–ö–æ–Ω–µ—Ü –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                       db_column='ENG_PCON_END')
 
     class Meta:
@@ -72,25 +72,25 @@ class Engine(TecdocModel):
 
 
 class CarType(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='TYP_ID')
 
     designation = models.ForeignKey(CountryDesignation,
-                                    verbose_name=u'é°Æß≠†Á•≠®•',
+                                    verbose_name=u'–û–±–æ–∑–Ω–∞—á–µ–Ω–∏–µ',
                                     db_column='TYP_CDS_ID')
 
     model = models.ForeignKey(CarModel,
-                              verbose_name=u'åÆ§•´Ï',
+                              verbose_name=u'–ú–æ–¥–µ–ª—å',
                               db_column='TYP_MOD_ID')
 
-    sorting = models.IntegerField(u'èÆ‡Ô§Æ™', db_column='TYP_SORT')
+    sorting = models.IntegerField(u'–ü–æ—Ä—è–¥–æ–∫', db_column='TYP_SORT')
 
-    production_start = models.IntegerField(u'ç†Á†´Æ Ø‡Æ®ß¢Æ§·‚¢†',
+    production_start = models.IntegerField(u'–ù–∞—á–∞–ª–æ –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                         db_column='TYP_PCON_START')
-    production_end = models.IntegerField(u'äÆ≠•Ê Ø‡Æ®ß¢Æ§·‚¢†',
+    production_end = models.IntegerField(u'–ö–æ–Ω–µ—Ü –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                       db_column='TYP_PCON_END')
 
-    engines = models.ManyToManyField(Engine, verbose_name=u'Ñ¢®£†‚•´®',
+    engines = models.ManyToManyField(Engine, verbose_name=u'–î–≤–∏–≥–∞—Ç–µ–ª–∏',
                                      through='tecdoc.CarTypeEngine')
 
     objects = TecdocManagerWithDes()
@@ -107,20 +107,20 @@ class CarType(TecdocModel):
 
 
 class CarTypeEngine(TecdocModel):
-    id = models.AutoField(u'à§', primary_key=True,
+    id = models.AutoField(u'–ò–¥', primary_key=True,
                           db_column='LTE_TYP_ID')
 
     car_type = models.ForeignKey(CarType,
-                                 verbose_name=u'åÆ§®‰®™†Ê®Ô ¨Æ§•´®',
+                                 verbose_name=u'–ú–æ–¥–∏—Ñ–∏–∫–∞—Ü–∏—è –º–æ–¥–µ–ª–∏',
                                  db_column='LTE_NR')
 
     engine = models.ForeignKey(Engine,
-                               verbose_name=u'Ñ¢®£†‚•´Ï',
+                               verbose_name=u'–î–≤–∏–≥–∞—Ç–µ–ª—å',
                                db_column='LTE_ENG_iD')
 
-    production_start = models.IntegerField(u'ç†Á†´Æ Ø‡Æ®ß¢Æ§·‚¢†',
+    production_start = models.IntegerField(u'–ù–∞—á–∞–ª–æ –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                         db_column='LTE_PCON_START')
-    production_end = models.IntegerField(u'äÆ≠•Ê Ø‡Æ®ß¢Æ§·‚¢†',
+    production_end = models.IntegerField(u'–ö–æ–Ω–µ—Ü –ø—Ä–æ–∏–∑–≤–æ–¥—Å—Ç–≤–∞',
                                       db_column='LTE_PCON_END')
 
     class Meta:
