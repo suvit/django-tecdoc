@@ -38,7 +38,7 @@ class Description(TecdocModel):
 
     class Meta:
         db_table = 'DES_TEXTS'
-        verbose_name = ''
+        verbose_name = u'Текст обозначения'
 
 
 class Text(TecdocModel):
@@ -87,6 +87,7 @@ class DesignationBase(TecdocModel):
 
     class Meta:
         abstract = True
+        app_label = 'tecdoc'
 
     def __unicode__(self):
         return self.description.text
@@ -112,9 +113,9 @@ class TextLanguage(DesignationBase):
 
 class TecdocManagerWithDes(TecdocManager):
     def get_query_set(self, *args, **kwargs):
-        return (super(TecdocManagerWithDes, self).get_query_set(*args, **kwargs)
-                                                 .filter(designation__lang=tdsettings.LANG_ID)
-                                                 .select_related('designation__description')                                          )
+        query = super(TecdocManagerWithDes, self).get_query_set(*args, **kwargs)
+        query = query.filter(designation__lang=tdsettings.LANG_ID)
+        return query.select_related('designation__description')
 
 
 class Designation(DesignationBase):

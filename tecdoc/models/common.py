@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models.base import ModelBase
 
 from tecdoc.conf import TecdocConf as tdsettings
+from tecdoc.models.base import (TecdocModel, TecdocManager,
+                                TecdocManagerWithDes)
 
 
 class Country(TecdocModel):
@@ -15,7 +17,7 @@ class Country(TecdocModel):
                                 db_column='COU_ISO2',
                                 blank=True, null=True)
 
-    designation = models.ForeignKey(CountryDesignation,
+    designation = models.ForeignKey('tecdoc.CountryDesignation',
                                     verbose_name=u'Обозначение',
                                     db_column='COU_DES_ID')
 

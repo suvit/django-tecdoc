@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -
 
-from base import (TecdocModel, TecdocManager
-                  TecdocManagerWithDes)
+from django.db import models
+
+from tecdoc.conf import TecdocConf as tdsettings
+from tecdoc.models.base import (TecdocModel, TecdocManager,
+                                TecdocManagerWithDes, Designation)
+
+from tecdoc.models.part import Part, Group
 
 class RootSection(object):
     id = None
@@ -11,7 +16,11 @@ class RootSection(object):
         return u'Корень'
 
     def get_parts(self):
-        return Part.objects.all()
+        return (Part.objects.select_related('supplier',
+                                            'lookup__brand',
+                                            'designation__description')
+                            .prefetch_related('images'))
+
 
     def get_children(self):
         return CarSection.objects.filter(parent__isnull=True)
@@ -65,7 +74,7 @@ class CarSection(TecdocModel):
         return (Part.objects.filter(groups__sections=self)
                             .distinct()
                             .select_related('supplier',
-                                            'lookup__manufacturer',
+                                            'lookup__brand',
                                             'designation__description')
                             .prefetch_related('images')
                                  )

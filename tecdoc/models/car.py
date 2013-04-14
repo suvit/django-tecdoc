@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -
 
-from base import (TecdocModel, TecdocManager,
-                  TecdocManagerWithDes)
+from django.db import models
+
+from tecdoc.conf import TecdocConf as tdsettings
+from tecdoc.models.base import (TecdocModel, TecdocManager,
+                                TecdocManagerWithDes)
 
 
 class CarModelManager(TecdocManagerWithDes):
@@ -33,11 +36,11 @@ class CarModel(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='MOD_PCON_END')
 
-    manufacturer = models.ForeignKey(Manufacturer,
+    manufacturer = models.ForeignKey('tecdoc.Manufacturer',
                                      verbose_name=u'Производитель',
                                      db_column='MOD_MFA_ID')
 
-    designation = models.ForeignKey(CountryDesignation,
+    designation = models.ForeignKey('tecdoc.CountryDesignation',
                                     verbose_name=u'Обозначение',
                                     db_column='MOD_CDS_ID')
 
@@ -56,7 +59,7 @@ class Engine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ENG_ID')
 
-    manufacturer = models.ForeignKey(Manufacturer,
+    manufacturer = models.ForeignKey('tecdoc.Manufacturer',
                                      verbose_name=u'Производитель',
                                      db_column='ENG_MFA_ID')
 
@@ -75,7 +78,7 @@ class CarType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TYP_ID')
 
-    designation = models.ForeignKey(CountryDesignation,
+    designation = models.ForeignKey('tecdoc.CountryDesignation',
                                     verbose_name=u'Обозначение',
                                     db_column='TYP_CDS_ID')
 

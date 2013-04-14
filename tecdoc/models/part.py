@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -
+from django.db import models
 
-from base import TecdocModel, TecdocManager
+from tecdoc.conf import TecdocConf as tdsettings
+from tecdoc.models.base import (TecdocModel, TecdocManager,
+                                TecdocManagerWithDes, Designation)
+
+from tecdoc.models.common import Supplier, Brand
 
 
 class Part(TecdocModel):
@@ -14,7 +19,7 @@ class Part(TecdocModel):
                                  db_column='ART_SUP_ID')
 
     # don`t use
-    #short_designation = models.ForeignKey(Designation,
+    #short_designation = models.ForeignKey('tecdoc.Designation',
     #                                      verbose_name=u'Краткое Обозначение',
     #                                      db_column='ART_DES_ID',
     #                                      related_name='parts_with_short_designation')
@@ -38,7 +43,7 @@ class Part(TecdocModel):
                                       through='tecdoc.PartСriperia',
                                       related_name='parts')
 
-    texts = models.ManyToManyField(TextLanguage,
+    texts = models.ManyToManyField('tecdoc.TextLanguage',
                                     verbose_name=u'Описание',
                                     through='tecdoc.PartDescription',
                                     related_name='parts')
@@ -62,8 +67,8 @@ class Part(TecdocModel):
         return u'%s %s %s (%s %s)' % (self.designation,
                                       self.supplier,
                                       self.title,
-                                      self.get_manufacturer,
-                                      self.get_title)
+                                      self.get_manufacturer(),
+                                      self.get_title())
 
     def get_manufacturer(self):
         return self.lookup.kind == 4 and self.lookup.manufacturer or self.supplier
@@ -77,21 +82,21 @@ class Group(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='GA_ID')
 
-    designation = models.ForeignKey(Designation,
+    designation = models.ForeignKey('tecdoc.Designation',
                                     verbose_name=u'Обозначение',
                                     db_column='GA_DES_ID')
 
-    standard =  models.ForeignKey(Designation,
+    standard =  models.ForeignKey('tecdoc.Designation',
                                   verbose_name=u'Стандарт',
                                   db_column='GA_DES_ID_STANDARD',
                                   related_name='+')
 
-    assembly =  models.ForeignKey(Designation,
+    assembly =  models.ForeignKey('tecdoc.Designation',
                                   verbose_name=u'Где устанавливается',
                                   db_column='GA_DES_ID_ASSEMBLY',
                                   related_name='+')
 
-    intended =  models.ForeignKey(Designation,
+    intended =  models.ForeignKey('tecdoc.Designation',
                                   verbose_name=u'Во что входит',
                                   db_column='GA_DES_ID_INTENDED',
                                   related_name='+')
@@ -115,7 +120,7 @@ class PartDescription(TecdocModel):
     group = models.ForeignKey(Group, verbose_name=u'Группа запчастей',
                               db_column='AIN_GA_ID')
 
-    text = models.ForeignKey(TextLanguage,
+    text = models.ForeignKey('tecdoc.TextLanguage',
                              verbose_name=u'Обозначение',
                              db_column='AIN_TMO_ID')
 
@@ -124,7 +129,8 @@ class PartDescription(TecdocModel):
 
 
 class SectionGroup(TecdocModel):
-    car_section = models.ForeignKey(CarSection, verbose_name=u'Категория',
+    car_section = models.ForeignKey('tecdoc.CarSection',
+                                    verbose_name=u'Категория',
                                     db_column='LGS_STR_ID')
 
     group = models.ForeignKey(Group,
@@ -160,7 +166,8 @@ class PartGroupSupplier(TecdocModel):
     group = models.ForeignKey(Group, verbose_name=u'Группа запчастей',
                               db_column='LAG_GA_ID')
 
-    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+    supplier = models.ForeignKey('tecdoc.Supplier',
+                                 verbose_name=u'Поставщик',
                                  db_column='LAG_SUP_ID')
 
     class Meta:
@@ -169,7 +176,8 @@ class PartGroupSupplier(TecdocModel):
 
 class PartTypeGroupSupplier(TecdocModel):
     # car_type, part, group and sort are primary key
-    car_type = models.ForeignKey(CarType, verbose_name=u'Модификация модели',
+    car_type = models.ForeignKey('tecdoc.CarType',
+                                 verbose_name=u'Модификация модели',
                                  db_column='LAT_TYP_ID')
 
     # XXX needed to PartGroup
@@ -179,7 +187,7 @@ class PartTypeGroupSupplier(TecdocModel):
     group = models.ForeignKey(Group, verbose_name=u'Группа Запчастей',
                               db_column='LAT_GA_ID')
 
-    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+    supplier = models.ForeignKey('tecdoc.Supplier', verbose_name=u'Поставщик',
                                  db_column='LAT_SUP_ID')
 
     sorting = models.IntegerField(u'Порядок', db_column='LAT_SORT')
@@ -196,12 +204,13 @@ class PartLookup(TecdocModel):
             (5, u'не оригинал'),
            )
 
-    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
-                             db_column='ARL_ART_ID',
-                             related_name='lookup')
+    part = models.OneToOneField(Part, verbose_name=u'Запчасть',
+                                primary_key=True,
+                                db_column='ARL_ART_ID',
+                                related_name='lookup')
 
     number = models.CharField(u'Номер', max_length=105,
-                              db_column='ARL_NUMBER',
+                              db_column='ARL_DISPLAY_NR',
                              )
 
     # derived from number
@@ -212,9 +221,9 @@ class PartLookup(TecdocModel):
     kind = models.IntegerField('Тип', choices=KIND,
                                db_column='ARL_KIND')
 
-    manufacturer = models.ForeignKey(Manufacturer,
-                                     verbose_name=u'Производитель',
-                                     db_column='ARL_BRA_ID')
+    brand = models.ForeignKey(Brand,
+                              verbose_name=u'Производитель',
+                              db_column='ARL_BRA_ID')
 
     sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
 
@@ -227,7 +236,8 @@ class PartList(TecdocModel):
                              db_column='ALI_ART_ID')
 
     inner_part = models.ForeignKey(Part, verbose_name=u'Запчасть',
-                                   db_column='ALI_ART_ID')
+                                   db_column='ALI_ART_ID',
+                                   related_name='inner_parts')
 
     group = models.ForeignKey(Group, verbose_name=u'Группа Запчастей',
                               db_column='ALI_GA_ID')
@@ -252,16 +262,19 @@ class CountryProperty(TecdocModel):
                              db_column='ACS_ART_ID',
                              related_name='properties')
 
-    pack = models.ForeignKey(Designation, verbose_name=u'Упаковка',
+    pack = models.ForeignKey('tecdoc.Designation', verbose_name=u'Упаковка',
                              db_column='ACS_PACK_UNIT',
                              related_name='+')
 
-    quantity = models.ForeignKey(Designation, verbose_name=u'Количество',
-                             db_column='ACS_QUANTITY_PER_UNIT',
-                             related_name='+')
+    quantity = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Количество',
+                                 db_column='ACS_QUANTITY_PER_UNIT',
+                                 related_name='+')
 
-    status = models.ForeignKey(Designation, verbose_name=u'Статус',
+    status = models.ForeignKey('tecdoc.Designation',
+                               verbose_name=u'Статус',
                                db_column='ACS_KV_STATUS_DES_ID',
                                related_name='+')
+
     class Meta:
         db_table = 'ART_COUNTRY_SPECIFICS'

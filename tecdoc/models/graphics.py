@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -
+from django.db import models
 
-from base import TecdocModel, TecdocManager
+from tecdoc.conf import TecdocConf as tdsettings
+from tecdoc.models.base import (TecdocModel, TecdocManager,
+                                TecdocManagerWithDes)
+
 
 class FileType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -43,7 +47,7 @@ class Image(File):
 
 class PartImage(TecdocModel):
 
-    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+    part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
                              db_column='LGA_ART_ID')
 
     image = models.ForeignKey(Image, verbose_name=u'Изображение',
@@ -64,7 +68,7 @@ class PdfFile(File):
 
 class PartPdf(TecdocModel):
 
-    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+    part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
                              db_column='LGA_ART_ID')
 
     image = models.ForeignKey(PdfFile, verbose_name=u'Изображение',
