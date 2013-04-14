@@ -1,0 +1,12 @@
+{% extends 'tecdoc/base.html'%}
+
+{% load url from future %}
+
+{% block content %}
+<h1>Производители (Всего {{ mfa.count }})</h1>
+<ul>
+{% for mnf in mfa.iterator %}
+  <li><a href="{% url 'manufacturer' mnf.id %}">{{mnf.title}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

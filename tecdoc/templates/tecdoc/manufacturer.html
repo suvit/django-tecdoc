@@ -1,0 +1,13 @@
+{% extends 'base.html'%}
+
+{% from url import future %}
+
+{% block content %}
+<h1>Производитель {{manufacturer}}</h1>
+<p>Всего моделей: {{models.count}}</p>
+<ul>
+{% for model in models.iterator %}
+  <li><a href="{% url 'cartypes' model.id %}">{{model}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

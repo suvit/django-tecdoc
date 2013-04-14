@@ -1,0 +1,12 @@
+{% extends 'tecdoc/base.html'%}
+
+{% load url from future %}
+
+{% block content %}
+<h1>Поставщики (Всего {{ supplier.count }})</h1>
+<ul>
+{% for supplier in suppliers.iterator %}
+  <li><a href="{% url 'supplier' supplier.id %}">{{supplier}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
