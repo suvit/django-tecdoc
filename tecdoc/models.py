@@ -383,11 +383,38 @@ class CarSection(TecdocModel):
         return CarSection.objects.filter(id__in=parents).order_by('level')
 
     def get_parts(self, car_type=None):
-        return (Part.objects.filter(generic_parts__sections=self)
+        return (Part.objects.filter(groups__sections=self)
+                            .distinct()
                             .select_related('supplier',
+                                            'lookup__manufacturer',
                                             'designation__description')
                             .prefetch_related('images')
                                  )
+
+    def get_groups(self):
+        return (Group.objects.filter(sections=self)
+                             .distinct()
+                             .select_related('designation__description')
+                                 )
+
+    def lookup_by_number(self, manufacturers=None):
+        query = Part.objects.filter(lookup=self)
+
+        if manufacturers:
+            query = query.filter(lookup_manufacturer=manufacturers)
+
+        query.select_related('lookup__manufacturer',
+                             'designation__description')
+
+        return query
+
+    def lookup_analog(self, part_id, part_type=None):
+        query = Part.objects.filter(lookup__part=part_id)
+
+        if part_type:
+            query.filter(lookup__kind=part_type)
+
+        return query
 
 
 class Part(TecdocModel):
@@ -412,13 +439,13 @@ class Part(TecdocModel):
                                     
     car_types = models.ManyToManyField('tecdoc.CarType',
                                        verbose_name=u'Модификации авто',
-                                       through='tecdoc.PartTypeGroup',
+                                       through='tecdoc.PartTypeGroupSupplier',
                                        related_name='parts')
 
-    generic_parts = models.ManyToManyField('tecdoc.GenericPart',
-                                           verbose_name=u'Оригинальная? запчасть',
-                                           through='tecdoc.PartGroup',
-                                           related_name='parts')
+    groups = models.ManyToManyField('tecdoc.Group',
+                                    verbose_name=u'Группа запчастей',
+                                    through='tecdoc.PartGroup',
+                                    related_name='parts')
 
     images = models.ManyToManyField('tecdoc.Image',
                                     verbose_name=u'Изображения',
@@ -436,31 +463,60 @@ class Part(TecdocModel):
         db_table = 'ARTICLES'
 
     def __unicode__(self):
-        return u'%s %s %s' % (self.designation, self.supplier, self.title)
+        return u'%s %s %s (%s %s)' % (self.designation,
+                                      self.supplier,
+                                      self.title,
+                                      self.get_manufacturer,
+                                      self.get_title)
+
+    def get_manufacturer(self):
+        return self.lookup.kind == 4 and self.lookup.manufacturer or self.supplier
+
+    def get_title(self):
+        return self.lookup.kind in [2,3] and self.lookup.number or self.title
 
 
-class GenericPart(TecdocModel):
+class Group(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='GA_ID')
 
-    objects = TecdocManager()
+    designation = models.ForeignKey(Designation,
+                                    verbose_name=u'Обозначение',
+                                    db_column='GA_DES_ID')
+
+    standard =  models.ForeignKey(Designation,
+                                  verbose_name=u'Стандарт',
+                                  db_column='GA_DES_ID_STANDARD',
+                                  related_name='+')
+
+    assembly =  models.ForeignKey(Designation,
+                                  verbose_name=u'Где устанавливается',
+                                  db_column='GA_DES_ID_ASSEMBLY',
+                                  related_name='+')
+
+    intended =  models.ForeignKey(Designation,
+                                  verbose_name=u'Во что входит',
+                                  db_column='GA_DES_ID_INTENDED',
+                                  related_name='+')
 
     sections = models.ManyToManyField('tecdoc.CarSection',
                                       verbose_name=u'Категории',
-                                      through='tecdoc.SectionGenericPart',
+                                      through='tecdoc.SectionGroup',
                                       related_name='generic_parts')
+
+    #objects = TecdocManagerWithDes()
 
     class Meta:
         db_table = 'GENERIC_ARTICLES'
 
 
-class SectionGenericPart(TecdocModel):
+class SectionGroup(TecdocModel):
     car_section = models.ForeignKey(CarSection, verbose_name=u'Категория',
                                     db_column='LGS_STR_ID')
 
-    generic_part = models.ForeignKey(GenericPart,
-                                   verbose_name=u'Оригинальная? Запчать',
-                                   db_column='LGS_GA_ID')
+    group = models.ForeignKey(Group,
+                              verbose_name=u'Группа запчатей',
+                              db_column='LGS_GA_ID')
 
     class Meta:
         db_table = 'LINK_GA_STR'
@@ -473,38 +529,23 @@ class PartGroup(TecdocModel):
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                              db_column='LA_ART_ID')
 
-    generic_part = models.ForeignKey(GenericPart,
-                                    verbose_name=u'Оригинальная? Запчать',
-                                    db_column='LA_GA_ID')
+    group = models.ForeignKey(Group,
+                              verbose_name=u'Группа запчастей',
+                              db_column='LA_GA_ID')
+
+    sorting = models.IntegerField(u'Порядок', db_column='LA_SORT')
 
     class Meta:
         db_table = 'LINK_ART'
 
 
-class PartTypeGroup(TecdocModel):
-    car_type = models.ForeignKey(CarType, verbose_name=u'Модификация модели',
-                                 db_column='LAT_TYP_ID')
-
-    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
-                             db_column='LAT_LA_ID')
-     
-    generic_part = models.ForeignKey(GenericPart, verbose_name=u'Запчасть',
-                                    db_column='LAT_GA_ID')
-
-    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
-                                 db_column='LAT_SUP_ID')
-
-    class Meta:
-        db_table = 'LINK_LA_TYP'
-
-
-class PartGenericPart(TecdocModel):
-
+class PartGroupSupplier(TecdocModel):
+    # part and group primary key
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                              db_column='LAG_ART_ID')
 
-    generic_part = models.ForeignKey(GenericPart, verbose_name=u'Запчасть',
-                                    db_column='LAG_GA_ID')
+    group = models.ForeignKey(Group, verbose_name=u'Группа запчастей',
+                              db_column='LAG_GA_ID')
 
     supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
                                  db_column='LAG_SUP_ID')
@@ -513,9 +554,67 @@ class PartGenericPart(TecdocModel):
         db_table = 'LINK_ART_GA'
 
 
-class Property(TecdocModel):
-    objects = TecdocManager()
+class PartTypeGroupSupplier(TecdocModel):
+    # car_type, part, group and sort are primary key
+    car_type = models.ForeignKey(CarType, verbose_name=u'Модификация модели',
+                                 db_column='LAT_TYP_ID')
 
+    # XXX needed to PartGroup
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+                             db_column='LAT_LA_ID')
+
+    group = models.ForeignKey(Group, verbose_name=u'Группа Запчастей',
+                              db_column='LAT_GA_ID')
+
+    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+                                 db_column='LAT_SUP_ID')
+
+    sorting = models.IntegerField(u'Порядок', db_column='LAT_SORT')
+
+    class Meta:
+        db_table = 'LINK_LA_TYP'
+
+
+class PartLookup(TecdocModel):
+    KIND = ((1, u'не оригинал'),
+            (2, u'торговый'),
+            (3, u'оригинал'),
+            (4, u'не оригинал'),
+            (5, u'не оригинал'),
+           )
+
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+                             db_column='ARL_ART_ID',
+                             related_name='lookup')
+
+    number = models.CharField(u'Номер', max_length=105,
+                              db_column='ARL_NUMBER',
+                             )
+
+    # derived from number
+    search_number = models.CharField(u'Номер для поиска', max_length=105,
+                                     db_column='ARL_SEARCH_NUMBER',
+                                     )
+
+    kind = models.IntegerField('Тип', choices=KIND,
+                               db_column='ARL_KIND')
+
+    manufacturer = models.ForeignKey(Manufacturer,
+                                     verbose_name=u'Производитель',
+                                     db_column='ARL_BRA_ID')
+
+    sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
+
+    class Meta:
+        db_table = 'ART_LOOKUP'
+
+
+class CountryProperty(TecdocModel):
+    class Meta:
+        db_table = 'ART_COUNTRY_SPECIFICS'
+
+
+class Property(TecdocModel):
     class Meta:
         db_table = 'ARTICLE_CRITERIA'
 
@@ -537,7 +636,7 @@ class File(TecdocModel):
     type = models.ForeignKey(FileType, verbose_name=u'Тип',
                              db_column='GRA_DOC_TYPE')
 
-    section1 = models.IntegerField(u'Категория 1', db_column='GRA_TAB_NR')
+    db_number = models.IntegerField(u'Категория 1', db_column='GRA_TAB_NR')
 
     filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
 
@@ -554,7 +653,7 @@ class Image(File):
 
     def relative_path(self):
         ext = self.type.ext.lower()
-        return 'images/%s/%s.%s' % (self.section1,
+        return 'images/%s/%s.%s' % (self.db_number,
                                     self.filename,
                                     ext == 'jp2' and 'jpg' or ext)
 
@@ -590,7 +689,6 @@ class PartPdf(TecdocModel):
         db_table = 'LINK_GRA_ART'
 
 
-#function LookupByNumber
 #function LookupAnalog
 #function GetPartInfo
 #function GetPropertys
