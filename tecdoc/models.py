@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -
 
 from django.db import models
+from django.db.models.base import ModelBase
 
 from tecdoc.conf import TecdocConf as tdsettings
 
@@ -11,8 +12,17 @@ class TecdocManager(models.Manager):
                                           .using(tdsettings.DATABASE)
                                                )
 
+# XXX bug in django - managed attr don`t inherited
+class TecdocModelBase(ModelBase):
+    def __new__(cls, name, bases, attrs):
+        new_class = super(TecdocModelBase, cls).__new__(cls, name, bases, attrs)
+        new_class._meta.managed = False
+        return new_class
+
 class TecdocModel(models.Model):
- 
+
+    __metaclass__ = TecdocModelBase
+
     objects = TecdocManager()
 
     class Meta:
