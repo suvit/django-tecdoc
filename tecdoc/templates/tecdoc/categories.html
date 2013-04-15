@@ -28,7 +28,7 @@
 <h2>Универсальные группы ({{cat.get_groups.count}})</h2>
 <ul>
 {% for group in page_obj %}
-<li><a href="{% url 'group' part.id %}">{{ group }}</a></li>
+<li><a href="{% url 'group' group.id %}">{{ group }}</a></li>
 {% endfor %}
 </ul>
 {% paginate %}

@@ -76,13 +76,11 @@ class CarSection(TecdocModel):
                             .select_related('supplier',
                                             'lookup__brand',
                                             'designation__description')
-                            .prefetch_related('images')
+                            .prefetch_related('lookup', 'images')
                                  )
 
     def get_groups(self):
         return (Group.objects.filter(sections=self)
-                             .distinct()
-                             .select_related('designation__description')
                                  )
 
     def lookup_by_number(self, manufacturers=None):

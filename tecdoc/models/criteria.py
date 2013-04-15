@@ -40,9 +40,13 @@ class Criteria(TecdocModel):
         db_table = 'CRITERIA'
 
     def __unicode__(self):
-        return '%s %s %s' % (self.designation or self.short_designation,
-                             self.unit,
-                             self.is_interval and u'Интервальный' or '')
+        return u'%s %s %s %s' % (self.type, 
+                                 self.designation or self.short_designation,
+                                 self.get_unit(),
+                                 self.is_interval and u'Интервальный' or '')
+
+    def get_unit(self):
+        return self.unit if self.unit_id else ''
 
 
 class PartCriteria(TecdocModel):

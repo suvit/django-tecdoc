@@ -5,7 +5,7 @@
 {% load pagination_tags %}
 <h2>{{ part }}</h2>
 
-<h3>Универсальные связи</h3>
+<h3>Входит в группы</h3>
 <ul>
 {% for group in part.groups.all %}
 <li>{{ group }}</li>
@@ -15,7 +15,7 @@
 <h3>Оговорки</h3>
 <ul>
 {% for criteria in part.criteries.all %}
-<li>{{ citeria }}</li>
+<li>{{ criteria }}</li>
 {% endfor %}
 </ul>
 

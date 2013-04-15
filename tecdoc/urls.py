@@ -24,10 +24,9 @@ urlpatterns = patterns("tecdoc.views",
         'category.category_tree_by_type',
         name='caregory_tree_by_type'),
 
-    url(r'^groups/(?P<part_id>\d+)$',
+    url(r'^groups/(?P<group_id>\d+)$',
         'groups.group_view',
         name='group'),
- 
 
     url(r'^parts/(?P<part_id>\d+)$',
         'parts.part_view',
