@@ -5,12 +5,15 @@
 {% load pagination_tags %}
 <h1>Универсальная запчасть {{ group }}</h1>
 
+{% load pagination_tags %}
+{% autopaginate group.parts.all %}
 <h2>Запчасти</h2>
 <ul>
-{% for part in group.part.all %}
+{% for part in page_obj %}
 <li>{{ part }}</li>
 {% endfor %}
 </ul>
+{% paginate %}
 
 <h2>Категории</h2>
 <ul>

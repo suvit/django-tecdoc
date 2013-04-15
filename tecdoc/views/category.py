@@ -12,14 +12,9 @@ def category_tree(request, parent=None):
         parent = RootSection()
     else:
         parent = CarSection.objects.get(id=parent)
-    children = parent.get_children()
-
-    parts = parent.get_parts()
 
     return TemplateResponse(request, 'tecdoc/categories.html',
                             {'cat': parent,
-                             'children': children,
-                             'parts': parts,
                             }
                             )
 

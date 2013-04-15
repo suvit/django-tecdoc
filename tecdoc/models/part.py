@@ -7,6 +7,15 @@ from tecdoc.models.base import (TecdocModel, TecdocManager,
 
 from tecdoc.models.common import Supplier, Brand
 
+class PartManager(TecdocManagerWithDes):
+    def get_query_set(self, *args, **kwargs):
+        query = super(PartManager, self).get_query_set(*args, **kwargs)
+        query = query.select_related('designation__description',
+                                     'supplier')
+
+        query = query.prefetch_related('lookup', 'images')
+        return query
+
 
 class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -58,17 +67,15 @@ class Part(TecdocModel):
                                   through='tecdoc.PartPdf',
                                   related_name='parts') 
 
-    objects = TecdocManagerWithDes()
+    objects = PartManager()
 
     class Meta(TecdocModel.Meta):
         db_table = 'ARTICLES'
 
     def __unicode__(self):
-        return u'%s %s %s (%s %s)' % (self.designation,
+        return u'%s %s %s' % (self.designation,
                                       self.supplier,
-                                      self.title,
-                                      self.get_manufacturer(),
-                                      self.get_title())
+                                      self.title)
 
     def get_manufacturer(self):
         return u' '.join(unicode(part.kind == 4 and self.lookup.manufacturer or self.supplier) for part in self.lookup.all())
@@ -121,11 +128,13 @@ class Group(TecdocModel):
     class Meta(TecdocModel.Meta):
         db_table = 'GENERIC_ARTICLES'
 
-    def __unicode__(self):
+    def full_title(self):
         return u'%s - %s - %s - %s' % (self.designation,
                                  self.standard,
                                  self.assembly,
                                  self.intended)
+    def __unicode__(self):
+        return unicode(self.designation)
 
 class PartDescription(TecdocModel):
 

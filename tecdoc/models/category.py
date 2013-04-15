@@ -16,11 +16,10 @@ class RootSection(object):
         return u'Корень'
 
     def get_parts(self):
-        return (Part.objects.select_related('supplier',
-                                            'lookup__brand',
-                                            'designation__description')
-                            .prefetch_related('images'))
+        return Part.objects.all()
 
+    def get_groups(self):
+        return Group.objects.all()
 
     def get_children(self):
         return CarSection.objects.filter(parent__isnull=True)
@@ -71,17 +70,10 @@ class CarSection(TecdocModel):
         return CarSection.objects.filter(id__in=parents).order_by('level')
 
     def get_parts(self, car_type=None):
-        return (Part.objects.filter(groups__sections=self)
-                            .distinct()
-                            .select_related('supplier',
-                                            'lookup__brand',
-                                            'designation__description')
-                            .prefetch_related('lookup', 'images')
-                                 )
+        return Part.objects.filter(groups__sections=self).distinct()
 
     def get_groups(self):
-        return (Group.objects.filter(sections=self)
-                                 )
+        return Group.objects.filter(sections=self)
 
     def lookup_by_number(self, manufacturers=None):
         query = Part.objects.filter(lookup=self)
