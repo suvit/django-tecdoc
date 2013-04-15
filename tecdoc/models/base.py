@@ -90,7 +90,7 @@ class TextLanguage(DesignationBase):
 
     lang = models.ForeignKey(Language,
                              verbose_name=u'Язык',
-                             related_name='lang_designation',
+                             related_name='+',
                              db_column='TMO_LNG_ID')
 
     description = models.ForeignKey(Text,
@@ -116,7 +116,7 @@ class Designation(DesignationBase):
 
     lang = models.ForeignKey(Language,
                              verbose_name=u'Язык',
-                             related_name='lang_designation',
+                             related_name='+',
                              db_column='DES_LNG_ID')
 
     description = models.ForeignKey(Description,

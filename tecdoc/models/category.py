@@ -43,7 +43,7 @@ class CarSection(TecdocModel):
     level = models.IntegerField(u'Уровень дерева',
                                 db_column='STR_LEVEL')
 
-    designation = models.ForeignKey(Designation,
+    designation = models.ForeignKey('tecdoc.Designation',
                                     verbose_name=u'Обозначение',
                                     db_column='STR_DES_ID')
 

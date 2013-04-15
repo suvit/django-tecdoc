@@ -15,7 +15,7 @@ class Part(TecdocModel):
     title = models.CharField(u'Название', max_length=66,
                              db_column='ART_ARTICLE_NR')
 
-    supplier = models.ForeignKey(Supplier, verbose_name=u'Поставщик',
+    supplier = models.ForeignKey('tecdoc.Supplier', verbose_name=u'Поставщик',
                                  db_column='ART_SUP_ID')
 
     # don`t use
@@ -24,7 +24,7 @@ class Part(TecdocModel):
     #                                      db_column='ART_DES_ID',
     #                                      related_name='parts_with_short_designation')
 
-    designation = models.ForeignKey(Designation,
+    designation = models.ForeignKey('tecdoc.Designation',
                                     verbose_name=u'Обозначение',
                                     db_column='ART_COMPLETE_DES_ID')
                                     
@@ -38,9 +38,9 @@ class Part(TecdocModel):
                                     through='tecdoc.PartGroup',
                                     related_name='parts')
 
-    criteries = models.ManyToManyField('tecdoc.Group',
+    criteries = models.ManyToManyField('tecdoc.Criteria',
                                       verbose_name=u'Оговорки',
-                                      through='tecdoc.PartСriperia',
+                                      through='tecdoc.PartCriteria',
                                       related_name='parts')
 
     texts = models.ManyToManyField('tecdoc.TextLanguage',
@@ -221,7 +221,7 @@ class PartLookup(TecdocModel):
     kind = models.IntegerField('Тип', choices=KIND,
                                db_column='ARL_KIND')
 
-    brand = models.ForeignKey(Brand,
+    brand = models.ForeignKey('tecdoc.Brand',
                               verbose_name=u'Производитель',
                               db_column='ARL_BRA_ID')
 

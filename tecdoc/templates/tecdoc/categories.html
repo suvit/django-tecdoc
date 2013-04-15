@@ -1,0 +1,38 @@
+{% extends 'base.html'%}
+
+{% block navigation %}
+<ul>
+{% if cat.id %}
+  <li><a href="{% url category_tree %}">Корень</a></li>
+{% endif %}
+{% for parent in cat.get_ancestors %}
+  <li><a href="{% url category_tree parent.id %}">{{ parent }}</a></li>
+{% endfor %}
+</ul>
+
+<h1>{{cat.designation}}</h1>
+<ul>
+{% for child in children %}
+  <li><a href="{% url category_tree child.id %}">{{child.designation}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="parts">
+{% load pagination_tags %}
+{% autopaginate parts %}
+<h2>Запчасти (всего {{ page_obj.paginator.count }})</h2>
+{% paginate %}
+<ul>
+{% for part in page_obj %}
+<li>{{ part }}
+  {% for image in part.images.all %}
+    <img src="{{image.absolute_path}}" />
+  {% endfor %}
+</li>
+{% endfor %}
+</ul>
+{% paginate %}
+</div>
+{% endblock %}

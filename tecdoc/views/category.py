@@ -18,7 +18,7 @@ def category_tree(request, parent=None):
 
     parts = parent.get_parts()
 
-    return TemplateResponse(request, 'tecdoc/category_tree.html',
+    return TemplateResponse(request, 'tecdoc/categories.html',
                             {'cat': parent,
                              'children': children,
                              'parts': parts,

@@ -36,7 +36,7 @@ class File(TecdocModel):
 
 # TODO limit to img doc type
 class Image(File):
-    class Meta:
+    class Meta(File.Meta):
         proxy = True
 
     def relative_path(self):
@@ -59,7 +59,7 @@ class PartImage(TecdocModel):
 
 # TODO limit to pdf doc type
 class PdfFile(File):
-    class Meta(TecdocModel.Meta):
+    class Meta(File.Meta):
         proxy = True
 
     def relative_path(self):

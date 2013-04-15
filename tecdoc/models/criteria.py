@@ -21,7 +21,8 @@ class Criteria(TecdocModel):
 
     unit = models.ForeignKey('tecdoc.Designation',
                              verbose_name=u'Упаковка',
-                             db_column='CRI_UNIT_DES_ID')
+                             db_column='CRI_UNIT_DES_ID',
+                             related_name='+')
 
     type = models.CharField(u'Тип', max_length=1,
                             db_column='CRI_TYPE')
@@ -29,7 +30,7 @@ class Criteria(TecdocModel):
     is_interval = models.BooleanField(u'Интервальный',
                                       db_column='CRI_IS_INTERVAL')
 
-    child = models.ForeignKey(u'Второй критерий',
+    child = models.ForeignKey('self', verbose_name=u'Второй критерий',
                               db_column='CRI_SUCCESSOR',
                               related_name='parents')
 
