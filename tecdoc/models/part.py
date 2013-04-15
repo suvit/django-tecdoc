@@ -71,12 +71,22 @@ class Part(TecdocModel):
                                       self.get_title())
 
     def get_manufacturer(self):
-        return self.lookup.kind == 4 and self.lookup.manufacturer or self.supplier
+        return u' '.join(unicode(part.kind == 4 and self.lookup.manufacturer or self.supplier) for part in self.lookup.all())
 
     def get_title(self):
-        return self.lookup.kind in [2,3] and self.lookup.number or self.title
+        return u' '.join(unicode(part.kind in [2,3] and self.lookup.number or self.title) for part in self.lookup.all())
 
 
+class GroupManager(TecdocManagerWithDes):
+    def get_query_set(self, *args, **kwargs):
+        query = super(GroupManager, self).get_query_set(*args, **kwargs)
+        query = query.filter(standard__lang=tdsettings.LANG_ID,
+                             assembly__lang=tdsettings.LANG_ID,
+                             intended__lang=tdsettings.LANG_ID)
+        return query.select_related('designation__description',
+                                    'standard__description',
+                                    'assembly__description',
+                                    'intended__description')
 
 class Group(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -86,31 +96,36 @@ class Group(TecdocModel):
                                     verbose_name=u'Обозначение',
                                     db_column='GA_DES_ID')
 
-    standard =  models.ForeignKey('tecdoc.Designation',
-                                  verbose_name=u'Стандарт',
-                                  db_column='GA_DES_ID_STANDARD',
-                                  related_name='+')
+    standard = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Стандарт',
+                                 db_column='GA_DES_ID_STANDARD',
+                                 related_name='+')
 
-    assembly =  models.ForeignKey('tecdoc.Designation',
-                                  verbose_name=u'Где устанавливается',
-                                  db_column='GA_DES_ID_ASSEMBLY',
-                                  related_name='+')
+    assembly = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Где устанавливается',
+                                 db_column='GA_DES_ID_ASSEMBLY',
+                                 related_name='+')
 
-    intended =  models.ForeignKey('tecdoc.Designation',
-                                  verbose_name=u'Во что входит',
-                                  db_column='GA_DES_ID_INTENDED',
-                                  related_name='+')
+    intended = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Во что входит',
+                                 db_column='GA_DES_ID_INTENDED',
+                                 related_name='+')
 
     sections = models.ManyToManyField('tecdoc.CarSection',
                                       verbose_name=u'Категории',
                                       through='tecdoc.SectionGroup',
-                                      related_name='generic_parts')
+                                      related_name='groups')
 
-    #objects = TecdocManagerWithDes()
+    objects = GroupManager()
 
     class Meta(TecdocModel.Meta):
         db_table = 'GENERIC_ARTICLES'
 
+    def __unicode__(self):
+        return u'%s - %s - %s - %s' % (self.designation,
+                                 self.standard,
+                                 self.assembly,
+                                 self.intended)
 
 class PartDescription(TecdocModel):
 
@@ -204,7 +219,7 @@ class PartLookup(TecdocModel):
             (5, u'не оригинал'),
            )
 
-    part = models.OneToOneField(Part, verbose_name=u'Запчасть',
+    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                                 primary_key=True,
                                 db_column='ARL_ART_ID',
                                 related_name='lookup')

@@ -39,6 +39,11 @@ class Criteria(TecdocModel):
     class Meta(TecdocModel.Meta):
         db_table = 'CRITERIA'
 
+    def __unicode__(self):
+        return '%s %s %s' % (self.designation or self.short_designation,
+                             self.unit,
+                             self.is_interval and u'Интервальный' or '')
+
 
 class PartCriteria(TecdocModel):
     part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',

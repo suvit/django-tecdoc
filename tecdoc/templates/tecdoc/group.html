@@ -1,0 +1,23 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="part">
+{% load pagination_tags %}
+<h1>Универсальная запчасть {{ group }}</h1>
+
+<h2>Запчасти</h2>
+<ul>
+{% for part in group.part.all %}
+<li>{{ part }}</li>
+{% endfor %}
+</ul>
+
+<h2>Категории</h2>
+<ul>
+{% for category in group.sections.all %}
+<li>{{ category }}</li>
+{% endfor %}
+</ul>
+
+</div>
+{% endblock %}

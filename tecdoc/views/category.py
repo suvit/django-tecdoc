@@ -6,8 +6,6 @@ from django.template.response import TemplateResponse
 from tecdoc.models import (Manufacturer, CarModel, CarType,
                            RootSection, CarSection, Part)
 
-from pwshop.utils import paginate
-
 
 def category_tree(request, parent=None):
     if parent is None:

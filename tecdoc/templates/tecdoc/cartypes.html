@@ -1,0 +1,12 @@
+{% extends 'tecdoc/base.html'%}
+
+{% load url from future %}
+
+{% block content %}
+<h1>Модель {{ model }}</h1>
+<ul>
+{% for car_type in car_types.iterator %}
+  <li><a href="{% url 'car_type' car_type.id %}">{{car_type}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

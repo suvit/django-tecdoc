@@ -1,19 +1,21 @@
 {% extends 'base.html'%}
 
+{% load url from future %}
+
 {% block navigation %}
 <ul>
 {% if cat.id %}
-  <li><a href="{% url category_tree %}">Корень</a></li>
+  <li><a href="{% url 'category_tree' %}">Корень</a></li>
 {% endif %}
 {% for parent in cat.get_ancestors %}
-  <li><a href="{% url category_tree parent.id %}">{{ parent }}</a></li>
+  <li><a href="{% url 'category_tree' parent.id %}">{{ parent }}</a></li>
 {% endfor %}
 </ul>
 
 <h1>{{cat.designation}}</h1>
 <ul>
 {% for child in children %}
-  <li><a href="{% url category_tree child.id %}">{{child.designation}}</a></li>
+  <li><a href="{% url 'category_tree' child.id %}">{{child.designation}}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}
@@ -21,12 +23,22 @@
 {% block content %}
 <div class="parts">
 {% load pagination_tags %}
+{% autopaginate cat.get_groups %}
+{% paginate %}
+<h2>Универсальные группы ({{cat.get_groups.count}})</h2>
+<ul>
+{% for group in page_obj %}
+<li><a href="{% url 'group' part.id %}">{{ group }}</a></li>
+{% endfor %}
+</ul>
+{% paginate %}
+
+<h2>Запчасти (всего {{ parts.count }})</h2>
 {% autopaginate parts %}
-<h2>Запчасти (всего {{ page_obj.paginator.count }})</h2>
 {% paginate %}
 <ul>
 {% for part in page_obj %}
-<li>{{ part }}
+<li><a href="{% url 'part' part.id %}">{{ part }}</a>
   {% for image in part.images.all %}
     <img src="{{image.absolute_path}}" />
   {% endfor %}

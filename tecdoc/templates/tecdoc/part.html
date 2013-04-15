@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="part">
+{% load pagination_tags %}
+<h2>{{ part }}</h2>
+
+<h3>Универсальные связи</h3>
+<ul>
+{% for group in part.groups.all %}
+<li>{{ group }}</li>
+{% endfor %}
+</ul>
+
+<h3>Оговорки</h3>
+<ul>
+{% for criteria in part.criteries.all %}
+<li>{{ citeria }}</li>
+{% endfor %}
+</ul>
+
+<h3>Модели</h3>
+<ul>
+{% for car_type in part.car_types.all %}
+<li><a href="{% url 'model' car_type.id %}">{{ car_type }}</a></li>
+{% endfor %}
+</ul>
+
+</div>
+{% endblock %}
