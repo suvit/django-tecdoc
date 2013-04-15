@@ -27,7 +27,7 @@ class Country(TecdocModel):
 
     objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'COUNTRIES'
 
 
@@ -44,7 +44,7 @@ class Brand(TecdocModel):
                              db_column='BRA_MFC_CODE',
                              blank=True, null=True)
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'BRANDS'
         ordering = ['title']
 
@@ -62,7 +62,7 @@ class Manufacturer(TecdocModel):
                              db_column='MFA_MFC_CODE',
                              blank=True, null=True)
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'MANUFACTURERS'
         ordering = ['title']
 
@@ -78,7 +78,7 @@ class Supplier(TecdocModel):
                              db_column='SUP_BRAND',
                              blank=True, null=True)
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'SUPPLIERS'
 
     def __unicode__(self):

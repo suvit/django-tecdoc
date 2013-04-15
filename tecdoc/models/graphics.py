@@ -12,7 +12,7 @@ class FileType(TecdocModel):
 
     ext = models.CharField(max_length=9, db_column='DOC_EXTENSION')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'DOC_TYPES'
 
 
@@ -27,7 +27,7 @@ class File(TecdocModel):
 
     filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'GRAPHICS'
 
     def absolute_path(self):
@@ -53,13 +53,13 @@ class PartImage(TecdocModel):
     image = models.ForeignKey(Image, verbose_name=u'Изображение',
                               db_column='LGA_GRA_ID')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_GRA_ART'
 
 
 # TODO limit to pdf doc type
 class PdfFile(File):
-    class Meta:
+    class Meta(TecdocModel.Meta):
         proxy = True
 
     def relative_path(self):
@@ -74,5 +74,5 @@ class PartPdf(TecdocModel):
     image = models.ForeignKey(PdfFile, verbose_name=u'Изображение',
                               db_column='LGA_GRA_ID')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_GRA_ART'

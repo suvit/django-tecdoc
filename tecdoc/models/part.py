@@ -60,7 +60,7 @@ class Part(TecdocModel):
 
     objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ARTICLES'
 
     def __unicode__(self):
@@ -108,7 +108,7 @@ class Group(TecdocModel):
 
     #objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'GENERIC_ARTICLES'
 
 
@@ -124,7 +124,7 @@ class PartDescription(TecdocModel):
                              verbose_name=u'Обозначение',
                              db_column='AIN_TMO_ID')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table= 'ARTICLE_INFO'
 
 
@@ -137,7 +137,7 @@ class SectionGroup(TecdocModel):
                               verbose_name=u'Группа запчатей',
                               db_column='LGS_GA_ID')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_GA_STR'
 
 
@@ -154,7 +154,7 @@ class PartGroup(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='LA_SORT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_ART'
 
 
@@ -192,7 +192,7 @@ class PartTypeGroupSupplier(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='LAT_SORT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_LA_TYP'
 
 
@@ -227,7 +227,7 @@ class PartLookup(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ART_LOOKUP'
 
 
@@ -247,13 +247,13 @@ class PartList(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='ALI_SORT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ARTICLE_LISTS'
 
 
 #TODO
 class PartListCriteria(TecdocModel):
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ARTICLE_LIST_CRITERIA'
 
 
@@ -276,5 +276,5 @@ class CountryProperty(TecdocModel):
                                db_column='ACS_KV_STATUS_DES_ID',
                                related_name='+')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ART_COUNTRY_SPECIFICS'

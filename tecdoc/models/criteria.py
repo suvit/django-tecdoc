@@ -35,7 +35,7 @@ class Criteria(TecdocModel):
 
     objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'CRITERIA'
 
 
@@ -58,7 +58,7 @@ class PartCriteria(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='ACR_SORT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ARTICLE_CRITERIA'
 
     def get_value(self):

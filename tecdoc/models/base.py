@@ -12,16 +12,7 @@ class TecdocManager(models.Manager):
                                           .using(tdsettings.DATABASE)
                                                )
 
-# XXX bug in django - managed attr don`t inherited
-class TecdocModelBase(ModelBase):
-    def __new__(cls, name, bases, attrs):
-        new_class = super(TecdocModelBase, cls).__new__(cls, name, bases, attrs)
-        new_class._meta.managed = False
-        return new_class
-
 class TecdocModel(models.Model):
-
-    __metaclass__ = TecdocModelBase
 
     objects = TecdocManager()
 
@@ -36,7 +27,7 @@ class Description(TecdocModel):
                           db_column='TEX_ID')
     text = models.TextField(u'Текст', db_column='TEX_TEXT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'DES_TEXTS'
         verbose_name = u'Текст обозначения'
 
@@ -47,7 +38,7 @@ class Text(TecdocModel):
 
     text = models.TextField(u'Текст', db_column='TMT_TEXT')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'TEXT_MODULE_TEXT'
 
 
@@ -69,7 +60,7 @@ class Language(TecdocModel):
                                 db_column='LNG_CODEPAGE',
                                 blank=True, null=True)
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LANGUAGES'
 
 
@@ -85,9 +76,8 @@ class DesignationBase(TecdocModel):
 
     objects = DesignationManager()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         abstract = True
-        app_label = 'tecdoc'
 
     def __unicode__(self):
         return self.description.text
@@ -107,7 +97,7 @@ class TextLanguage(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='TMO_TMT_ID')
 
-    class Meta:
+    class Meta(DesignationBase.Meta):
         db_table = 'TEXT_MODULES'
 
 
@@ -133,7 +123,7 @@ class Designation(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='DES_TEX_ID')
 
-    class Meta:
+    class Meta(DesignationBase.Meta):
         db_table = 'DESIGNATIONS'
 
 
@@ -151,5 +141,5 @@ class CountryDesignation(DesignationBase):
                                     verbose_name=u'Описание',
                                     db_column='CDS_TEX_ID')
 
-    class Meta:
+    class Meta(DesignationBase.Meta):
         db_table = 'COUNTRY_DESIGNATIONS'

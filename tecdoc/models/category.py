@@ -52,7 +52,7 @@ class CarSection(TecdocModel):
 
     objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'SEARCH_TREE'
 
     def get_children(self):

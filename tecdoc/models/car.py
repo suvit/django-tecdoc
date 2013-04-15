@@ -51,7 +51,7 @@ class CarModel(TecdocModel):
                                        self.designation,
                                        self.production_start, self.production_end)
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'MODELS'
 
 
@@ -70,7 +70,7 @@ class Engine(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='ENG_PCON_END')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'ENGINES'
 
 
@@ -98,7 +98,7 @@ class CarType(TecdocModel):
 
     objects = TecdocManagerWithDes()
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'TYPES'
         ordering = ['sorting', 'production_start']
 
@@ -126,6 +126,6 @@ class CarTypeEngine(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='LTE_PCON_END')
 
-    class Meta:
+    class Meta(TecdocModel.Meta):
         db_table = 'LINK_TYP_ENG'
 
