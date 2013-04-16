@@ -3,10 +3,13 @@
 {% load url from future %}
 
 {% block content %}
-<h1>���⠢騪� (�ᥣ� {{ supplier.count }})</h1>
+<h1>Производители запчастей (Всего {{ suppliers.count }})</h1>
 <ul>
-{% for supplier in suppliers.iterator %}
+{% load pagination_tags %}
+{% autopaginate suppliers %}
+{% for supplier in page_obj %}
   <li><a href="{% url 'supplier' supplier.id %}">{{supplier}}</a></li>
 {% endfor %}
 </ul>
+{% paginate %}
 {% endblock %}

@@ -1,14 +1,17 @@
 {% extends 'tecdoc/base.html'%}
 
 {% load url from future %}
+{% load pagination_tags %}
 
 {% block content %}
 <h1>Модификация {{ car_type}}</h1>
 
 <h2>Запчасти</h2>
 <ul>
-{% for part in car_type.parts.iterator %}
+{% autopaginate car_type.parts %}
+{% for part in page_obj %}
   <li><a href="{% url 'part' part.id %}">{{part}}</a></li>
 {% endfor %}
 </ul>
+{% paginate %}
 {% endblock %}

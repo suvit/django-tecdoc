@@ -1,13 +1,17 @@
 {% extends 'base.html'%}
 
-{% from url import future %}
+{% load url from future %}
 
 {% block content %}
 <h1>Производитель {{manufacturer}}</h1>
 <p>Всего моделей: {{models.count}}</p>
+
+{% load pagination_tags %}
+{% autopaginate models %}
 <ul>
 {% for model in models.iterator %}
   <li><a href="{% url 'models' model.id %}">{{model}}</a></li>
 {% endfor %}
 </ul>
+{% paginate %}
 {% endblock %}

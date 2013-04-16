@@ -9,11 +9,16 @@ from tecdoc.models.base import (TecdocModel, TecdocManager,
 
 class CarModelManager(TecdocManagerWithDes):
 
+    def get_query_set(self, *args, **kwargs):
+        return (super(CarModelManager, self).get_query_set(*args, **kwargs)
+                                            .select_related('manufacturer',
+                                                            'designation__description')
+               )
+
     def get_models(self, manufacturer, date_min=None, date_max=None,
                    search_text=None):
 
-        query = self.get_query_set()
-        query = query.select_related('manufacturer', 'designation__description').filter(manufacturer=manufacturer)
+        query = self.filter(manufacturer=manufacturer)
 
         if date_min:
              # TODO
@@ -84,7 +89,8 @@ class CarType(TecdocModel):
 
     model = models.ForeignKey(CarModel,
                               verbose_name=u'Модель',
-                              db_column='TYP_MOD_ID')
+                              db_column='TYP_MOD_ID',
+                              related_name='cartypes')
 
     sorting = models.IntegerField(u'Порядок', db_column='TYP_SORT')
 

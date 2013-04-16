@@ -4,9 +4,12 @@
 
 {% block content %}
 <h1>Производители (Всего {{ mfa.count }})</h1>
+{% load pagination_tags %}
+{% autopaginate mfa %}
 <ul>
-{% for mnf in mfa.iterator %}
+{% for mnf in page_obj %}
   <li><a href="{% url 'manufacturer' mnf.id %}">{{mnf.title}}</a></li>
 {% endfor %}
 </ul>
+{% paginate %}
 {% endblock %}

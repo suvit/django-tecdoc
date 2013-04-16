@@ -9,6 +9,11 @@ urlpatterns = patterns("tecdoc.views",
     url(r'^models/(?P<model_id>\d+)/$', 'cartype.cartypes',
         name='models'),
 
+    url(r'^suppliers/$', 'suppliers.suppliers',
+        name='suppliers'),
+    url(r'^suppliers/(?P<supplier_id>\d+)/$', 'suppliers.supplier_view',
+        name='supplier'),
+
     url(r'^car_types/(?P<car_type_id>\d+)/$', 'cartype.car_type',
         name='car_type'),
 

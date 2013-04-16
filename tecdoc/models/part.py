@@ -5,7 +5,6 @@ from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes, Designation)
 
-from tecdoc.models.common import Supplier, Brand
 
 class PartManager(TecdocManagerWithDes):
     def get_query_set(self, *args, **kwargs):

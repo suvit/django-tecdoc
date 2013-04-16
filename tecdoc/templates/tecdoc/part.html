@@ -22,7 +22,7 @@
 <h3>Модели</h3>
 <ul>
 {% for car_type in part.car_types.all %}
-<li><a href="{% url 'model' car_type.id %}">{{ car_type }}</a></li>
+<li><a href="{% url 'car_type' car_type.id %}">{{ car_type }}</a></li>
 {% endfor %}
 </ul>
 
