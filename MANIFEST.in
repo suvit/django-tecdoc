@@ -1,0 +1,3 @@
+recursive-include tecdoc/templates *
+include README.md
+include requirements.txt
