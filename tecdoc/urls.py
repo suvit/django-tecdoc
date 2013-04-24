@@ -3,11 +3,11 @@ from django.conf import settings
 
 urlpatterns = patterns("tecdoc.views",
     url(r'^manufacturers/$', 'manufacturer.mfa',
-        name='manufacturers'),
+        name='tecdoc-manufacturers'),
     url(r'^manufacturer/(?P<mnf_id>\d+)/$', 'manufacturer.models',
-        name='manufacturer'),
+        name='tecdoc-manufacturer'),
     url(r'^models/(?P<model_id>\d+)/$', 'cartype.cartypes',
-        name='models'),
+        name='tecdoc-models'),
 
     url(r'^suppliers/$', 'suppliers.suppliers',
         name='suppliers'),
