@@ -67,7 +67,7 @@ class Manufacturer(TecdocModel):
         ordering = ['title']
 
     def __unicode__(self):
-        return self.title
+        return self.title.capitalize()
 
 
 class Supplier(TecdocModel):
@@ -82,4 +82,4 @@ class Supplier(TecdocModel):
         db_table = 'SUPPLIERS'
 
     def __unicode__(self):
-        return self.title
+        return self.title.capitalize()

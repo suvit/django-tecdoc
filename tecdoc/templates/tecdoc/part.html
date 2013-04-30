@@ -1,5 +1,7 @@
 {% extends 'tecdoc/base.html'%}
 
+{% load url from future %}
+
 {% block content %}
 <div class="part">
 {% load pagination_tags %}
@@ -21,7 +23,9 @@
 
 <h3>Модели</h3>
 <ul>
-{% for car_type in part.car_types.all %}
+{% load pagination_tags %}
+{% autopaginate part.car_types.all %}
+{% for car_type in page_obj %}
 <li><a href="{% url 'car_type' car_type.id %}">{{ car_type }}</a></li>
 {% endfor %}
 </ul>

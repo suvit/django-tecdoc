@@ -20,3 +20,14 @@ def part_view(request, part_id):
                             }
                            )
 
+def search_view(request, query):
+    form = SearchForm({'query': query})
+    if form.is_valid():
+        parts = Part.objects.lookup(query=form.cleaned_data['query'])
+    else:
+        parts = None
+        messages.add_message()
+
+    return TemplateResponse(request, 'tecdoc/search_part.html',
+                            {'form': form,
+                             'parts': parts})

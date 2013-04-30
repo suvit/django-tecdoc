@@ -18,7 +18,7 @@ def cartypes(request, model_id):
                             )
 
 def car_type(request, car_type_id):
-    car_type = get_object_or_404(CarType, id=model_id)
+    car_type = get_object_or_404(CarType, id=car_type_id)
     return TemplateResponse(request, 'tecdoc/cartype.html',
                             {'car_type': car_type}
                            )
