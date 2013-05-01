@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Create your views here.
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
 from tecdoc.models import (Manufacturer, CarModel, CarType,
@@ -11,7 +12,7 @@ def category_tree(request, parent=None):
     if parent is None:
         parent = RootSection()
     else:
-        parent = CarSection.objects.get(id=parent)
+        parent = get_object_or_404(CarSection, id=parent)
 
     return TemplateResponse(request, 'tecdoc/categories.html',
                             {'cat': parent,
