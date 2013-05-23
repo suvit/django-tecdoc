@@ -2,23 +2,20 @@
 # Create your views here.
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, DetailView
+
+from tecdoc.models import Manufacturer, CarModel
 
 
-from tecdoc.models import (Manufacturer, CarModel, CarType,
-                           RootSection, CarSection, Part)
+class ManufacturerList(ListView):
 
-def mfa(request):
-    mfa = Manufacturer.objects.filter(carmodel__gt=0).distinct()
-    return TemplateResponse(request, 'tecdoc/manufacturers.html',
-                            {'mfa':mfa}
-                           )
+    queryset = Manufacturer.objects.filter(carmodel__gt=0).distinct()
+
+    template_name = 'tecdoc/manufacturers.html'
 
 
-def models(request, mnf_id):
-    manufacturer = get_object_or_404(Manufacturer, id=mnf_id)
-    models = CarModel.objects.filter(manufacturer=mnf_id)
-    return TemplateResponse(request, 'tecdoc/manufacturer.html',
-                            {'models': models,
-                             'manufacturer': manufacturer}
-                           )
+class ManufacturerView(DetailView):
+    model = Manufacturer
+    pk_url_kwarg = 'mnf_id'
 
+    template_name = 'tecdoc/manufacturer.html'

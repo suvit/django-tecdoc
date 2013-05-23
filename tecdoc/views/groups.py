@@ -16,4 +16,3 @@ def group_view(request, group_id):
                             {'group': group,
                             }
                            )
-

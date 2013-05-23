@@ -4,11 +4,11 @@
 {% load pagination_tags %}
 
 {% block content %}
-<h1>Модель {{ model }}</h1>
+<h1>Модель {{ object }}</h1>
 
-<h2>Модификации ({{model.cartypes.count}})</h2>
+<h2>Модификации ({{object.cartypes.count}})</h2>
 <ul>
-{% autopaginate model.cartypes.all %}
+{% autopaginate object.cartypes.all %}
 {% for car_type in page_obj %}
   <li><a href="{% url 'car_type' car_type.id %}">{{car_type}}</a></li>
 {% endfor %}

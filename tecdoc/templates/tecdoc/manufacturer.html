@@ -3,13 +3,13 @@
 {% load url from future %}
 
 {% block content %}
-<h1>Производитель {{manufacturer}}</h1>
-<p>Всего моделей: {{models.count}}</p>
+<h1>Производитель {{object}}</h1>
+<p>Всего моделей: {{object.carmodel_set.count}}</p>
 
 {% load pagination_tags %}
-{% autopaginate models %}
+{% autopaginate object.carmodel_set.all %}
 <ul>
-{% for model in models.iterator %}
+{% for model in page_obj %}
   <li><a href="{% url 'tecdoc-models' model.id %}">{{model}}</a></li>
 {% endfor %}
 </ul>

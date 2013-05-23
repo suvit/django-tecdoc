@@ -3,9 +3,9 @@
 {% load url from future %}
 
 {% block content %}
-<h1>Производители (Всего {{ mfa.count }})</h1>
+<h1>Производители (Всего {{ object_list.count }})</h1>
 {% load pagination_tags %}
-{% autopaginate mfa %}
+{% autopaginate object_list %}
 <ul>
 {% for mnf in page_obj %}
   <li><a href="{% url 'tecdoc-manufacturer' mnf.id %}">{{mnf.title}}</a></li>

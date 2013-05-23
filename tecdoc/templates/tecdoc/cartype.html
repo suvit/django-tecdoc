@@ -4,11 +4,11 @@
 {% load pagination_tags %}
 
 {% block content %}
-<h1>Модификация {{ car_type }}</h1>
+<h1>Модификация {{ object }}</h1>
 
 <h2>Категории</h2>
 <ul>
-{% autopaginate car_type.list_categories %}
+{% autopaginate object.list_categories %}
 {% for cat in page_obj %}
   <li><a href="{% url 'category_tree' cat.id %}">{{cat}}</a></li>
 {% endfor %}
@@ -17,7 +17,7 @@
 
 <h2>Запчасти</h2>
 <ul>
-{% autopaginate car_type.parts.all %}
+{% autopaginate object.parts.all %}
 {% for part in page_obj %}
   <li><a href="{% url 'part' part.id %}">{{part}}</a></li>
 {% endfor %}
