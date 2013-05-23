@@ -10,7 +10,7 @@
 {% autopaginate models %}
 <ul>
 {% for model in models.iterator %}
-  <li><a href="{% url 'models' model.id %}">{{model}}</a></li>
+  <li><a href="{% url 'tecdoc-models' model.id %}">{{model}}</a></li>
 {% endfor %}
 </ul>
 {% paginate %}

@@ -24,6 +24,9 @@ class RootSection(object):
     def get_children(self):
         return CarSection.objects.filter(parent__isnull=True)
 
+    def has_children(self):
+        return True
+
     def get_ancestors(self):
         return CarSection.objects.none()
 
@@ -56,6 +59,9 @@ class CarSection(TecdocModel):
 
     def get_children(self):
         return self.children.all()
+
+    def has_children(self):
+        return self.children.exists()
 
     def get_ancestors(self):
         if self.parent is None:

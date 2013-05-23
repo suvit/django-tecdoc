@@ -21,6 +21,9 @@
 {% endblock %}
 
 {% block content %}
+
+<h1>{{cat.designation}}</h1>
+
 <div class="parts">
 {% load pagination_tags %}
 {% autopaginate cat.get_groups %}

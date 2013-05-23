@@ -8,7 +8,7 @@
 {% autopaginate mfa %}
 <ul>
 {% for mnf in page_obj %}
-  <li><a href="{% url 'manufacturer' mnf.id %}">{{mnf.title}}</a></li>
+  <li><a href="{% url 'tecdoc-manufacturer' mnf.id %}">{{mnf.title}}</a></li>
 {% endfor %}
 </ul>
 {% paginate %}

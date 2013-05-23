@@ -6,6 +6,8 @@ from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
 
+from tecdoc.models.category import CarSection
+
 
 class CarModelManager(TecdocManagerWithDes):
 
@@ -53,8 +55,8 @@ class CarModel(TecdocModel):
 
     def __unicode__(self):
         return u'%s %s (%s-%s)' % (self.manufacturer,
-                                       self.designation,
-                                       self.production_start, self.production_end)
+                                   self.designation,
+                                   self.production_start, self.production_end or u'н.д.')
 
     class Meta(TecdocModel.Meta):
         db_table = 'MODELS'
@@ -79,6 +81,16 @@ class Engine(TecdocModel):
         db_table = 'ENGINES'
 
 
+class CarTypeManager(TecdocManagerWithDes):
+
+    def get_query_set(self, *args, **kwargs):
+        return (super(CarTypeManager, self).get_query_set(*args, **kwargs)
+                                           .filter(model__designation__lang=16)
+                                           .select_related('model__manufacturer',
+                                                           'model__designation__description',
+                                                           'designation__description')
+               )
+
 class CarType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TYP_ID')
@@ -90,6 +102,7 @@ class CarType(TecdocModel):
     model = models.ForeignKey(CarModel,
                               verbose_name=u'Модель',
                               db_column='TYP_MOD_ID',
+                              
                               related_name='cartypes')
 
     sorting = models.IntegerField(u'Порядок', db_column='TYP_SORT')
@@ -102,19 +115,22 @@ class CarType(TecdocModel):
     engines = models.ManyToManyField(Engine, verbose_name=u'Двигатели',
                                      through='tecdoc.CarTypeEngine')
 
-    objects = TecdocManagerWithDes()
+    objects = CarTypeManager()
 
     class Meta(TecdocModel.Meta):
         db_table = 'TYPES'
         ordering = ['sorting', 'production_start']
 
     def __unicode__(self):
-        return u'(%s)%s %s (%s-%s)' % (self.id, self.model,
-                                       self.designation,
-                                       self.production_start, self.production_end
-                                      )
+        return u'%s %s (%s-%s)' % (self.model,
+                                   self.designation,
+                                   self.production_start, self.production_end or u'н.д.'
+                                  )
 
-
+    def list_categories(self, parent=10001):
+        return CarSection.objects.filter(parent=parent,
+                                         groups__parts__car_types=self).distinct()
+        
 class CarTypeEngine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='LTE_TYP_ID')
