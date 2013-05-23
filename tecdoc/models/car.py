@@ -113,7 +113,8 @@ class CarType(TecdocModel):
                                       db_column='TYP_PCON_END')
 
     engines = models.ManyToManyField(Engine, verbose_name=u'Двигатели',
-                                     through='tecdoc.CarTypeEngine')
+                                     through='tecdoc.CarTypeEngine',
+                                     related_name='cartypes')
 
     objects = CarTypeManager()
 
