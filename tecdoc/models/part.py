@@ -61,10 +61,10 @@ class Part(TecdocModel):
                                     through='tecdoc.PartImage',
                                     related_name='parts')
 
-    pdfs = models.ManyToManyField('tecdoc.PdfFile',
-                                  verbose_name=u'Инструкция',
-                                  through='tecdoc.PartPdf',
-                                  related_name='parts') 
+    #pdfs = models.ManyToManyField('tecdoc.PdfFile',
+    #                              verbose_name=u'Инструкция',
+    #                              through='tecdoc.PartImage',
+    #                              related_name='parts') 
 
     objects = PartManager()
 
@@ -259,7 +259,7 @@ class PartList(TecdocModel):
                              db_column='ALI_ART_ID')
 
     inner_part = models.ForeignKey(Part, verbose_name=u'Запчасть',
-                                   db_column='ALI_ART_ID',
+                                   db_column='ALI_ART_ID_COMPONENT',
                                    related_name='inner_parts')
 
     group = models.ForeignKey(Group, verbose_name=u'Группа Запчастей',

@@ -45,6 +45,8 @@ class Image(File):
                                     self.filename,
                                     ext == 'jp2' and 'jpg' or ext)
 
+
+# TODO Make link to File
 class PartImage(TecdocModel):
 
     part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
@@ -64,15 +66,3 @@ class PdfFile(File):
 
     def relative_path(self):
         return '/pdf/000%s.pdf' % (self.filename,)
-
-
-class PartPdf(TecdocModel):
-
-    part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
-                             db_column='LGA_ART_ID')
-
-    image = models.ForeignKey(PdfFile, verbose_name=u'Изображение',
-                              db_column='LGA_GRA_ID')
-
-    class Meta(TecdocModel.Meta):
-        db_table = 'LINK_GRA_ART'
