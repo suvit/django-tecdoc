@@ -9,8 +9,8 @@
 
 <h3>Входит в группы</h3>
 <ul>
-{% for group in part.groups.all %}
-<li>{{ group }}</li>
+{% for group in part.groups.distinct.all %}
+<li><a href="{% url 'group' group.id %}">{{ group }}</a></li>
 {% endfor %}
 </ul>
 

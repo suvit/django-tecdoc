@@ -3,22 +3,22 @@
 {% block content %}
 <div class="part">
 {% load pagination_tags %}
-<h1>Универсальная запчасть {{ group }}</h1>
+<h1>Универсальная запчасть {{ object }}</h1>
 
 {% load pagination_tags %}
-{% autopaginate group.parts.all %}
+{% autopaginate object.parts.distinct.all %}
 <h2>Запчасти</h2>
 <ul>
 {% for part in page_obj %}
-<li>{{ part }}</li>
+<li><a href="{% url 'part' part.id %}">{{ part }}</a></li>
 {% endfor %}
 </ul>
 {% paginate %}
 
 <h2>Категории</h2>
 <ul>
-{% for category in group.sections.all %}
-<li>{{ category }}</li>
+{% for category in object.sections.all %}
+<li><a href="{% url 'category_tree' category.id %}">{{ category }}</a></li>
 {% endfor %}
 </ul>
 

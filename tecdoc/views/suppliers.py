@@ -1,14 +1,18 @@
 ﻿# -*- coding: utf-8 -*-
-# Create your views here.
-from django.template.response import TemplateResponse
+from django.views.generic import ListView, DetailView
 
-from tecdoc.models import (Supplier)
+from tecdoc.models import Supplier
 
-def suppliers(request):
-    suppliers = Supplier.objects.all()
-    return TemplateResponse(request, 'tecdoc/suppliers.html',
-                            {'suppliers': suppliers}
-                           )
 
-def supplier_view(request, supplier_id):
-    pass
+class SupplierList(ListView):
+    model = Supplier
+   
+    template_name = 'tecdoc/suppliers.html'
+
+
+class SupplierView(DetailView):
+    model = Supplier
+
+    pk_url_kwarg = 'supplier_id'
+
+    template_name = 'tecdoc/supplier.html'
