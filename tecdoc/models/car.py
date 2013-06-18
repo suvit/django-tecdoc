@@ -85,9 +85,11 @@ class CarTypeManager(TecdocManagerWithDes):
 
     def get_query_set(self, *args, **kwargs):
         return (super(CarTypeManager, self).get_query_set(*args, **kwargs)
-                                           .filter(model__designation__lang=16)
+                                           .filter(model__designation__lang=16,
+                                                   full_designation__lang=16)
                                            .select_related('model__manufacturer',
                                                            'model__designation__description',
+                                                           'full_designation__description',
                                                            'designation__description')
                )
 
@@ -99,6 +101,10 @@ class CarType(TecdocModel):
     designation = models.ForeignKey('tecdoc.CountryDesignation',
                                     verbose_name=u'Обозначение',
                                     db_column='TYP_CDS_ID')
+
+    full_designation = models.ForeignKey('tecdoc.CountryDesignation',
+                                         verbose_name=u'Полное обозначение',
+                                         db_column='TYP_MMT_CDS_ID')
 
     model = models.ForeignKey(CarModel,
                               verbose_name=u'Модель',
@@ -123,10 +129,9 @@ class CarType(TecdocModel):
         ordering = ['sorting', 'production_start']
 
     def __unicode__(self):
-        return u'%s %s (%s-%s)' % (self.model,
-                                   self.designation,
-                                   self.production_start, self.production_end or u'н.д.'
-                                  )
+        return u'%s (%s-%s)' % (self.full_designation,
+                                self.production_start, self.production_end or u'н.д.'
+                               )
 
     def list_categories(self, parent=10001):
         return CarSection.objects.filter(parent=parent,
