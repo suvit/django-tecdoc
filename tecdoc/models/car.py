@@ -104,7 +104,9 @@ class CarType(TecdocModel):
 
     full_designation = models.ForeignKey('tecdoc.CountryDesignation',
                                          verbose_name=u'Полное обозначение',
-                                         db_column='TYP_MMT_CDS_ID')
+                                         db_column='TYP_MMT_CDS_ID',
+                                         related_name='+'
+                                        )
 
     model = models.ForeignKey(CarModel,
                               verbose_name=u'Модель',
