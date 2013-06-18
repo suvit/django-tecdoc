@@ -13,7 +13,7 @@ class FileType(TecdocModel):
     ext = models.CharField(max_length=9, db_column='DOC_EXTENSION')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'DOC_TYPES'
+        db_table = tdsettings.DB_PREFIX + 'DOC_TYPES'
 
 
 class File(TecdocModel):
@@ -28,7 +28,7 @@ class File(TecdocModel):
     filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'GRAPHICS'
+        db_table = tdsettings.DB_PREFIX + 'GRAPHICS'
 
     def absolute_path(self):
         return '%s%s' % (tdsettings.FILE_HOST, self.relative_path())
@@ -56,7 +56,7 @@ class PartImage(TecdocModel):
                               db_column='LGA_GRA_ID')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LINK_GRA_ART'
+        db_table = tdsettings.DB_PREFIX + 'LINK_GRA_ART'
 
 
 # TODO limit to pdf doc type

@@ -37,7 +37,7 @@ class Criteria(TecdocModel):
     objects = TecdocManagerWithDes()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'CRITERIA'
+        db_table = tdsettings.DB_PREFIX + 'CRITERIA'
 
     def __unicode__(self):
         return u'%s %s %s %s' % (self.type, 
@@ -69,7 +69,7 @@ class PartCriteria(TecdocModel):
     sorting = models.IntegerField(u'Порядок', db_column='ACR_SORT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ARTICLE_CRITERIA'
+        db_table = tdsettings.DB_PREFIX + 'ARTICLE_CRITERIA'
 
     def get_value(self):
         return self.value or self.description

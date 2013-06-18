@@ -17,7 +17,7 @@ class Country(TecdocModel):
                                 db_column='COU_ISO2',
                                 blank=True, null=True)
 
-    designation = models.ForeignKey('tecdoc.CountryDesignation',
+    designation = models.ForeignKey('tecdoc.Designation',
                                     verbose_name=u'Обозначение',
                                     db_column='COU_DES_ID')
 
@@ -28,7 +28,7 @@ class Country(TecdocModel):
     objects = TecdocManagerWithDes()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'COUNTRIES'
+        db_table = tdsettings.DB_PREFIX + 'COUNTRIES'
 
 
 class Brand(TecdocModel):
@@ -45,7 +45,7 @@ class Brand(TecdocModel):
                              blank=True, null=True)
 
     class Meta(TecdocModel.Meta):
-        db_table = 'BRANDS'
+        db_table = tdsettings.DB_PREFIX + 'BRANDS'
         ordering = ['title']
 
 
@@ -63,7 +63,7 @@ class Manufacturer(TecdocModel):
                              blank=True, null=True)
 
     class Meta(TecdocModel.Meta):
-        db_table = 'MANUFACTURERS'
+        db_table = tdsettings.DB_PREFIX + 'MANUFACTURERS'
         ordering = ['title']
 
     def __unicode__(self):
@@ -79,7 +79,7 @@ class Supplier(TecdocModel):
                              blank=True, null=True)
 
     class Meta(TecdocModel.Meta):
-        db_table = 'SUPPLIERS'
+        db_table = tdsettings.DB_PREFIX + 'SUPPLIERS'
 
     def __unicode__(self):
         return self.title.capitalize()

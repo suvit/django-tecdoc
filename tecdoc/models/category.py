@@ -55,7 +55,7 @@ class CarSection(TecdocModel):
     objects = TecdocManagerWithDes()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'SEARCH_TREE'
+        db_table = tdsettings.DB_PREFIX + 'SEARCH_TREE'
 
     def get_children(self):
         return self.children.all()

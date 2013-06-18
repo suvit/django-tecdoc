@@ -59,7 +59,7 @@ class CarModel(TecdocModel):
                                    self.production_start, self.production_end or u'н.д.')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'MODELS'
+        db_table = tdsettings.DB_PREFIX + 'MODELS'
 
 
 class Engine(TecdocModel):
@@ -78,7 +78,7 @@ class Engine(TecdocModel):
                                       db_column='ENG_PCON_END')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ENGINES'
+        db_table = tdsettings.DB_PREFIX + 'ENGINES'
 
 
 class CarTypeManager(TecdocManagerWithDes):
@@ -91,6 +91,7 @@ class CarTypeManager(TecdocManagerWithDes):
                                                            'designation__description')
                )
 
+
 class CarType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TYP_ID')
@@ -102,7 +103,6 @@ class CarType(TecdocModel):
     model = models.ForeignKey(CarModel,
                               verbose_name=u'Модель',
                               db_column='TYP_MOD_ID',
-                              
                               related_name='cartypes')
 
     sorting = models.IntegerField(u'Порядок', db_column='TYP_SORT')
@@ -119,7 +119,7 @@ class CarType(TecdocModel):
     objects = CarTypeManager()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'TYPES'
+        db_table = tdsettings.DB_PREFIX + 'TYPES'
         ordering = ['sorting', 'production_start']
 
     def __unicode__(self):
@@ -131,7 +131,8 @@ class CarType(TecdocModel):
     def list_categories(self, parent=10001):
         return CarSection.objects.filter(parent=parent,
                                          groups__parts__car_types=self).distinct()
-        
+
+
 class CarTypeEngine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='LTE_TYP_ID')
@@ -150,5 +151,5 @@ class CarTypeEngine(TecdocModel):
                                       db_column='LTE_PCON_END')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LINK_TYP_ENG'
+        db_table = tdsettings.DB_PREFIX + 'LINK_TYP_ENG'
 

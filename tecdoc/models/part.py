@@ -69,7 +69,7 @@ class Part(TecdocModel):
     objects = PartManager()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ARTICLES'
+        db_table = tdsettings.DB_PREFIX + 'ARTICLES'
 
     def __unicode__(self):
         return u'%s %s %s' % (self.designation,
@@ -125,7 +125,7 @@ class Group(TecdocModel):
     objects = GroupManager()
 
     class Meta(TecdocModel.Meta):
-        db_table = 'GENERIC_ARTICLES'
+        db_table = tdsettings.DB_PREFIX + 'GENERIC_ARTICLES'
 
     def full_title(self):
         return u'%s - %s - %s - %s' % (self.designation,
@@ -148,7 +148,7 @@ class PartDescription(TecdocModel):
                              db_column='AIN_TMO_ID')
 
     class Meta(TecdocModel.Meta):
-        db_table= 'ARTICLE_INFO'
+        db_table= tdsettings.DB_PREFIX + 'ARTICLE_INFO'
 
 
 class SectionGroup(TecdocModel):
@@ -161,7 +161,7 @@ class SectionGroup(TecdocModel):
                               db_column='LGS_GA_ID')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LINK_GA_STR'
+        db_table = tdsettings.DB_PREFIX + 'LINK_GA_STR'
 
 
 class PartGroup(TecdocModel):
@@ -178,7 +178,7 @@ class PartGroup(TecdocModel):
     sorting = models.IntegerField(u'Порядок', db_column='LA_SORT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LINK_ART'
+        db_table = tdsettings.DB_PREFIX + 'LINK_ART'
 
 
 class PartGroupSupplier(TecdocModel):
@@ -194,7 +194,7 @@ class PartGroupSupplier(TecdocModel):
                                  db_column='LAG_SUP_ID')
 
     class Meta:
-        db_table = 'LINK_ART_GA'
+        db_table = tdsettings.DB_PREFIX + 'LINK_ART_GA'
 
 
 class PartTypeGroupSupplier(TecdocModel):
@@ -216,7 +216,7 @@ class PartTypeGroupSupplier(TecdocModel):
     sorting = models.IntegerField(u'Порядок', db_column='LAT_SORT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LINK_LA_TYP'
+        db_table = tdsettings.DB_PREFIX + 'LINK_LA_TYP'
 
 
 class PartLookup(TecdocModel):
@@ -251,7 +251,7 @@ class PartLookup(TecdocModel):
     sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ART_LOOKUP'
+        db_table = tdsettings.DB_PREFIX + 'ART_LOOKUP'
 
 
 class PartList(TecdocModel):
@@ -271,13 +271,13 @@ class PartList(TecdocModel):
     sorting = models.IntegerField(u'Порядок', db_column='ALI_SORT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ARTICLE_LISTS'
+        db_table = tdsettings.DB_PREFIX + 'ARTICLE_LISTS'
 
 
 #TODO
 class PartListCriteria(TecdocModel):
     class Meta(TecdocModel.Meta):
-        db_table = 'ARTICLE_LIST_CRITERIA'
+        db_table = tdsettings.DB_PREFIX + 'ARTICLE_LIST_CRITERIA'
 
 
 class CountryProperty(TecdocModel):
@@ -300,4 +300,4 @@ class CountryProperty(TecdocModel):
                                related_name='+')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'ART_COUNTRY_SPECIFICS'
+        db_table = tdsettings.DB_PREFIX + 'ART_COUNTRY_SPECIFICS'

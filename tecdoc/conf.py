@@ -9,6 +9,7 @@ RU_LANG = 16
 class TecdocConf(AppConf):
 
     DATABASE = 'tecdoc'
+    DB_PREFIX = ''
 
     LANG_ID = RU_LANG
     APP_ROOT = '.'

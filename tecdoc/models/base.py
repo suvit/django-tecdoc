@@ -28,7 +28,7 @@ class Description(TecdocModel):
     text = models.TextField(u'Текст', db_column='TEX_TEXT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'DES_TEXTS'
+        db_table = tdsettings.DB_PREFIX + 'DES_TEXTS'
         verbose_name = u'Текст обозначения'
 
 
@@ -39,7 +39,7 @@ class Text(TecdocModel):
     text = models.TextField(u'Текст', db_column='TMT_TEXT')
 
     class Meta(TecdocModel.Meta):
-        db_table = 'TEXT_MODULE_TEXT'
+        db_table = tdsettings.DB_PREFIX + 'TEXT_MODULE_TEXT'
 
 
 class Language(TecdocModel):
@@ -61,7 +61,7 @@ class Language(TecdocModel):
                                 blank=True, null=True)
 
     class Meta(TecdocModel.Meta):
-        db_table = 'LANGUAGES'
+        db_table = tdsettings.DB_PREFIX + 'LANGUAGES'
 
 
 class DesignationManager(TecdocManager):
@@ -98,7 +98,7 @@ class TextLanguage(DesignationBase):
                                     db_column='TMO_TMT_ID')
 
     class Meta(DesignationBase.Meta):
-        db_table = 'TEXT_MODULES'
+        db_table = tdsettings.DB_PREFIX + 'TEXT_MODULES'
 
 
 class TecdocManagerWithDes(TecdocManager):
@@ -124,7 +124,7 @@ class Designation(DesignationBase):
                                     db_column='DES_TEX_ID')
 
     class Meta(DesignationBase.Meta):
-        db_table = 'DESIGNATIONS'
+        db_table = tdsettings.DB_PREFIX + 'DESIGNATIONS'
 
 
 class CountryDesignation(DesignationBase):
@@ -142,4 +142,4 @@ class CountryDesignation(DesignationBase):
                                     db_column='CDS_TEX_ID')
 
     class Meta(DesignationBase.Meta):
-        db_table = 'COUNTRY_DESIGNATIONS'
+        db_table = tdsettings.DB_PREFIX + 'COUNTRY_DESIGNATIONS'
