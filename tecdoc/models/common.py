@@ -83,3 +83,20 @@ class Supplier(TecdocModel):
 
     def __unicode__(self):
         return self.title.capitalize()
+
+
+class SupplierLogo(TecdocModel):
+    id = models.AutoField(u'Ид', primary_key=True,
+                          db_column='SLO_ID')
+
+    supplier = models.ForeignKey('tecdoc.Supplier',
+                                 verbose_name=u'Поставщик',
+                                 db_column='SLO_SUP_ID')
+
+    language = models.ForeignKey('tecdoc.Language',
+                                 verbose_name=u'Язык',
+                                 db_column='SLO_LNG_ID')
+
+    class Meta(TecdocModel.Meta):
+        db_table = tdsettings.DB_PREFIX + 'SUPPLIER_LOGOS'
+
