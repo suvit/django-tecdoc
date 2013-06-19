@@ -51,6 +51,14 @@ class CarModel(TecdocModel):
                                     verbose_name=u'Обозначение',
                                     db_column='MOD_CDS_ID')
 
+    for_car = models.SmallIntegerField(u'Для легковых',
+                                       db_column='MOD_PC',
+                                       blank=True, null=True)
+
+    for_truck = models.SmallIntegerField(u'Для грузовых',
+                                        db_column='MOD_CV',
+                                        blank=True, null=True)
+
     objects = CarModelManager()
 
     def __unicode__(self):

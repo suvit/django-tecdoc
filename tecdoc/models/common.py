@@ -62,6 +62,14 @@ class Manufacturer(TecdocModel):
                              db_column='MFA_MFC_CODE',
                              blank=True, null=True)
 
+    for_car = models.SmallIntegerField(u'Для легковых',
+                                       db_column='MFA_PC_MFC',
+                                       blank=True, null=True)
+
+    for_truck = models.SmallIntegerField(u'Для грузовых',
+                                        db_column='MFA_CV_MFC',
+                                        blank=True, null=True)
+
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'MANUFACTURERS'
         ordering = ['title']
