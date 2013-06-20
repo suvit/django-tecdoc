@@ -20,7 +20,7 @@ class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ART_ID')
 
-    title = models.CharField(u'Название', max_length=66,
+    sku = models.CharField(u'Название', max_length=66,
                              db_column='ART_ARTICLE_NR')
 
     supplier = models.ForeignKey('tecdoc.Supplier', verbose_name=u'Поставщик',
@@ -35,7 +35,7 @@ class Part(TecdocModel):
     designation = models.ForeignKey('tecdoc.Designation',
                                     verbose_name=u'Обозначение',
                                     db_column='ART_COMPLETE_DES_ID')
-                                    
+
     car_types = models.ManyToManyField('tecdoc.CarType',
                                        verbose_name=u'Модификации авто',
                                        through='tecdoc.PartTypeGroupSupplier',
@@ -73,14 +73,14 @@ class Part(TecdocModel):
 
     def __unicode__(self):
         return u'%s %s %s' % (self.designation,
-                                      self.supplier,
-                                      self.title)
+                              self.supplier,
+                              self.sku)
 
     def get_manufacturer(self):
-        return u' '.join(unicode(part.kind == 4 and self.lookup.manufacturer or self.supplier) for part in self.lookup.all())
+        return u', '.join(unicode(part.kind == 4 and self.lookup.manufacturer or self.supplier) for part in self.lookup.all())
 
-    def get_title(self):
-        return u' '.join(unicode(part.kind in [2,3] and self.lookup.number or self.title) for part in self.lookup.all())
+    def get_sku(self):
+        return u', '.join(unicode(part.kind in [2,3] and self.lookup.number or self.sku) for part in self.lookup.all())
 
 
 class GroupManager(TecdocManagerWithDes):
