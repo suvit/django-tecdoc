@@ -36,6 +36,10 @@ class CarModelManager(TecdocManagerWithDes):
 
 
 class CarModel(TecdocModel):
+    YESNO = (('0', u'Нет'),
+             ('1', u'Да'),
+            )
+
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='MOD_ID')
     production_start = models.IntegerField(u'Начало производства',
@@ -53,11 +57,13 @@ class CarModel(TecdocModel):
 
     for_car = models.SmallIntegerField(u'Для легковых',
                                        db_column='MOD_PC',
+                                       choices=YESNO,
                                        blank=True, null=True)
 
     for_truck = models.SmallIntegerField(u'Для грузовых',
-                                        db_column='MOD_CV',
-                                        blank=True, null=True)
+                                         db_column='MOD_CV',
+                                         choices=YESNO,
+                                         blank=True, null=True)
 
     objects = CarModelManager()
 

@@ -31,6 +31,9 @@ class Description(TecdocModel):
         db_table = tdsettings.DB_PREFIX + 'DES_TEXTS'
         verbose_name = u'Текст обозначения'
 
+    def __unicode__(self):
+        return self.text
+
 
 class Text(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -39,7 +42,10 @@ class Text(TecdocModel):
     text = models.TextField(u'Текст', db_column='TMT_TEXT')
 
     class Meta(TecdocModel.Meta):
-        db_table = tdsettings.DB_PREFIX + 'TEXT_MODULE_TEXT'
+        db_table = tdsettings.DB_PREFIX + 'TEXT_MODULE_TEXTS'
+
+    def __unicode__(self):
+        return self.text
 
 
 class Language(TecdocModel):
@@ -83,7 +89,7 @@ class DesignationBase(TecdocModel):
         return self.description.text
 
 
-class TextLanguage(DesignationBase):
+class TextModule(DesignationBase):
     # XXX not a key
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TMO_ID')

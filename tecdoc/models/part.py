@@ -51,7 +51,7 @@ class Part(TecdocModel):
                                       through='tecdoc.PartCriteria',
                                       related_name='parts')
 
-    texts = models.ManyToManyField('tecdoc.TextLanguage',
+    texts = models.ManyToManyField('tecdoc.TextModule',
                                     verbose_name=u'Описание',
                                     through='tecdoc.PartDescription',
                                     related_name='parts')
@@ -143,7 +143,7 @@ class PartDescription(TecdocModel):
     group = models.ForeignKey(Group, verbose_name=u'Группа запчастей',
                               db_column='AIN_GA_ID')
 
-    text = models.ForeignKey('tecdoc.TextLanguage',
+    text = models.ForeignKey('tecdoc.TextModule',
                              verbose_name=u'Обозначение',
                              db_column='AIN_TMO_ID')
 

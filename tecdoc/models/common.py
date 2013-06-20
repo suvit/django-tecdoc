@@ -28,6 +28,8 @@ class Country(TecdocModel):
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'COUNTRIES'
+        verbose_name = u'Страна'
+        verbose_name_plural = u'Страны'
 
 
 class Brand(TecdocModel):
@@ -46,9 +48,18 @@ class Brand(TecdocModel):
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'BRANDS'
         ordering = ['title']
+        verbose_name = u'Бренд'
+        verbose_name_plural = u'Бренды'
+
+    def __unicode__(self):
+        return self.title.capitalize()
 
 
 class Manufacturer(TecdocModel):
+
+    YESNO = (('0', u'Нет'),
+             ('1', u'Да'),
+            )
 
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='MFA_ID')
@@ -57,22 +68,24 @@ class Manufacturer(TecdocModel):
                              db_column='MFA_BRAND',
                              blank=True, null=True)
 
-    code = models.CharField(u'Название', max_length=30,
+    code = models.CharField(u'Код', max_length=30,
                              db_column='MFA_MFC_CODE',
                              blank=True, null=True)
 
     for_car = models.SmallIntegerField(u'Для легковых',
                                        db_column='MFA_PC_MFC',
+                                       choices=YESNO,
                                        blank=True, null=True)
 
     for_truck = models.SmallIntegerField(u'Для грузовых',
                                         db_column='MFA_CV_MFC',
+                                        choices=YESNO,
                                         blank=True, null=True)
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'MANUFACTURERS'
         ordering = ['title']
+        verbose_name = u'Производитель автомобилей'
+        verbose_name_plural = u'Производители автомобилей'
 
-    def __unicode__(self):
-        return self.title.capitalize()
-
+    __unicode__ = Brand.__unicode__.im_func

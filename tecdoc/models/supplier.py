@@ -6,6 +6,8 @@ from django.db.models.base import ModelBase
 from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
+from tecdoc.models.common import Brand
+
 
 class Supplier(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -17,9 +19,10 @@ class Supplier(TecdocModel):
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'SUPPLIERS'
+        verbose_name = u'Производитель запчастей'
+        verbose_name_plural = u'Производители запчастей'
 
-    def __unicode__(self):
-        return self.title.capitalize()
+    __unicode__ = Brand.__unicode__.im_func
 
     def get_country(self):
         return self.addresses.filter(type=1,
