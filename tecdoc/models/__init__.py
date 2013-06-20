@@ -6,3 +6,4 @@ from tecdoc.models.common import *
 from tecdoc.models.criteria import *
 from tecdoc.models.graphics import *
 from tecdoc.models.part import *
+from tecdoc.models.supplier import *

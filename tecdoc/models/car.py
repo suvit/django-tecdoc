@@ -131,6 +131,24 @@ class CarType(TecdocModel):
     engines = models.ManyToManyField(Engine, verbose_name=u'Двигатели',
                                      through='tecdoc.CarTypeEngine',
                                      related_name='cartypes')
+    eng_volume = models.IntegerField(u'Объём двигателя (куб.см)',
+                                     db_column='TYP_CCM',
+                                     blank=True, null=True)
+    cylinders = models.IntegerField(u'Количество цилиндров',
+                                    db_column='TYP_CYLINDERS',
+                                    blank=True, null=True)
+    power_kw_from = models.IntegerField(u'Мощность двигателя (кВт): ОТ',
+                                        db_column='TYP_KW_FROM',
+                                        blank=True, null=True)
+    power_kw_upto = models.IntegerField(u'Мощность двигателя (кВт): До',
+                                        db_column='TYP_KW_UPTO',
+                                        blank=True, null=True)
+    power_hp_from = models.IntegerField(u'Мощность двигателя (л.с.): ОТ',
+                                        db_column='TYP_HP_FROM',
+                                        blank=True, null=True)
+    power_hp_upto = models.IntegerField(u'Мощность двигателя (л.с.): До',
+                                        db_column='TYP_HP_FROM',
+                                        blank=True, null=True)
 
     objects = CarTypeManager()
 
