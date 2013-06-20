@@ -44,10 +44,10 @@ class SupplierLogo(TecdocModel):
 
 class SupplierAddress(TecdocModel):
     # XXX not a primary key
-    id = models.ForeignKey('tecdoc.Supplier', primary_key=True,
-                           verbose_name=u'Поставщик',
-                           db_column='SAD_SUP_ID',
-                           related_name='addresses')
+    supplier = models.ForeignKey('tecdoc.Supplier', primary_key=True,
+                                 verbose_name=u'Поставщик',
+                                 db_column='SAD_SUP_ID',
+                                 related_name='addresses')
 
     type = models.IntegerField(u'Тип',
                                db_column='SAD_TYPE_OF_ADDRESS')
@@ -60,3 +60,7 @@ class SupplierAddress(TecdocModel):
                                        verbose_name=u'Почтовый адресс. Страна',
                                        db_column='SAD_COU_ID_POSTAL',
                                        related_name="addresses")
+
+    class Meta(TecdocModel.Meta):
+        db_table = tdsettings.DB_PREFIX + 'SUPPLIER_ADDRESSES'
+
