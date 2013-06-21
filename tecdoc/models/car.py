@@ -153,7 +153,7 @@ class CarType(TecdocModel):
                                         db_column='TYP_HP_FROM',
                                         blank=True, null=True)
     power_hp_upto = models.IntegerField(u'Мощность двигателя (л.с.): До',
-                                        db_column='TYP_HP_FROM',
+                                        db_column='TYP_HP_UPTO',
                                         blank=True, null=True)
 
     objects = CarTypeManager()

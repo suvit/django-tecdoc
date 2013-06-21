@@ -15,6 +15,10 @@ class PartManager(TecdocManagerWithDes):
         query = query.prefetch_related('lookup', 'images')
         return query
 
+    def lookup(self, number):
+        #return self.filter(lookup
+        pass
+
 
 class Part(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -223,14 +227,14 @@ class PartLookup(TecdocModel):
     KIND = ((1, u'не оригинал'),
             (2, u'торговый'),
             (3, u'оригинал'),
-            (4, u'не оригинал'),
-            (5, u'не оригинал'),
+            (4, u'номер замен'),
+            (5, u'штрих-код'),
            )
 
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
-                                primary_key=True,
-                                db_column='ARL_ART_ID',
-                                related_name='lookup')
+                             primary_key=True,
+                             db_column='ARL_ART_ID',
+                             related_name='lookup')
 
     number = models.CharField(u'Номер', max_length=105,
                               db_column='ARL_DISPLAY_NR',
@@ -241,7 +245,7 @@ class PartLookup(TecdocModel):
                                      db_column='ARL_SEARCH_NUMBER',
                                      )
 
-    kind = models.IntegerField('Тип', choices=KIND,
+    kind = models.IntegerField(u'Тип', choices=KIND,
                                db_column='ARL_KIND')
 
     brand = models.ForeignKey('tecdoc.Brand',
