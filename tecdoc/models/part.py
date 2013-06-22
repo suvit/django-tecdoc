@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -
+import re
 from django.db import models
 
 from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes, Designation)
+
+number_re = re.compile('[^a-zA-Z0-9]+')
+
+def clean_number(number):
+    return number_re.sub('', number)
 
 
 class PartManager(TecdocManagerWithDes):
@@ -12,12 +18,11 @@ class PartManager(TecdocManagerWithDes):
         query = query.select_related('designation__description',
                                      'supplier')
 
-        query = query.prefetch_related('lookup', 'images')
+        query = query.prefetch_related('analogs', 'images')
         return query
 
     def lookup(self, number):
-        #return self.filter(lookup
-        pass
+        return PartAnalog.objects.filter(search_number=clean_number(number))
 
 
 class Part(TecdocModel):
@@ -80,11 +85,9 @@ class Part(TecdocModel):
                               self.supplier,
                               self.sku)
 
-    def get_manufacturer(self):
-        return u', '.join(unicode(part.kind == 4 and self.lookup.manufacturer or self.supplier) for part in self.lookup.all())
-
-    def get_sku(self):
-        return u', '.join(unicode(part.kind in [2,3] and self.lookup.number or self.sku) for part in self.lookup.all())
+    def list_sections(self):
+        groups = self.groups.distrint()
+        return Section.objects.filter(groups__in=groups)
 
 
 class GroupManager(TecdocManagerWithDes):
@@ -97,6 +100,7 @@ class GroupManager(TecdocManagerWithDes):
                                     'standard__description',
                                     'assembly__description',
                                     'intended__description')
+
 
 class Group(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
@@ -138,6 +142,7 @@ class Group(TecdocModel):
                                  self.intended)
     def __unicode__(self):
         return unicode(self.designation)
+
 
 class PartDescription(TecdocModel):
 
@@ -185,6 +190,7 @@ class PartGroup(TecdocModel):
         db_table = tdsettings.DB_PREFIX + 'LINK_ART'
 
 
+# Redundant Model
 class PartGroupSupplier(TecdocModel):
     # part and group primary key
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
@@ -223,7 +229,7 @@ class PartTypeGroupSupplier(TecdocModel):
         db_table = tdsettings.DB_PREFIX + 'LINK_LA_TYP'
 
 
-class PartLookup(TecdocModel):
+class PartAnalog(TecdocModel):
     KIND = ((1, u'не оригинал'),
             (2, u'торговый'),
             (3, u'оригинал'),
@@ -234,7 +240,7 @@ class PartLookup(TecdocModel):
     part = models.ForeignKey(Part, verbose_name=u'Запчасть',
                              primary_key=True,
                              db_column='ARL_ART_ID',
-                             related_name='lookup')
+                             related_name='analogs')
 
     number = models.CharField(u'Номер', max_length=105,
                               db_column='ARL_DISPLAY_NR',
@@ -254,8 +260,23 @@ class PartLookup(TecdocModel):
 
     sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
 
+    def __unicode__(self):
+        return u'%s %s %s' % (self.get_kind_display(), self.get_manufacturer(), self.get_sku())
+
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'ART_LOOKUP'
+
+    def get_manufacturer(self):
+        if self.kind in ['3', '4']:
+            return self.brand
+        else:
+            return self.part.supplier
+
+    def get_sku(self):
+        if self.kind in ['2', '3']:
+            return self.number
+        else:
+            return self.part.sku
 
 
 class PartList(TecdocModel):
