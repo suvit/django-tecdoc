@@ -17,16 +17,16 @@ or
 
 Add separate db for `tecdoc`
 
-   DATABASES = {
-      'default': {
-          ...
-      },
-      'tecdoc': {
-          'ENGINE': 'django.db.backends.mysql',
-          'NAME': 'tecdoc',
-          'HOST': 'host',
-          'USER': 'user',
-          'PASSWORD': 'pass',
-      }
-   }
+    DATABASES = {
+       'default': {
+           ...
+       },
+       'tecdoc': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': 'tecdoc',
+           'HOST': 'host',
+           'USER': 'user',
+           'PASSWORD': 'pass',
+       }
+    }
 
