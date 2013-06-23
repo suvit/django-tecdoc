@@ -30,3 +30,13 @@ Add separate db for `tecdoc`
        }
     }
 
+Settings
+------------
+
+for settings used `django-appconf`
+
+You can overwrite several settings
+* DATABASE
+* DB_PREFIX
+* LANG_ID
+* FILE_HOST
