@@ -169,7 +169,7 @@ class CarType(TecdocModel):
 
     def list_categories(self, parent=10001):
         return CarSection.objects.filter(parent=parent,
-                                         groups__parts__car_types=self).distinct()
+                                         groups__parttypegroupsupplier__car_type=self).distinct()
 
     def list_parts(self):
         from tecdoc.models.part import Part

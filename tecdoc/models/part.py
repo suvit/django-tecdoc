@@ -22,7 +22,7 @@ class PartManager(TecdocManagerWithDes):
         query = query.prefetch_related('analogs', 'images')
         return query
 
-    def lookup(self, number):
+    def lookup(self, number, manufacturer=None):
         return PartAnalog.objects.filter(search_number=clean_number(number))
 
 
