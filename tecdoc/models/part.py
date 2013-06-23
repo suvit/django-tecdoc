@@ -5,6 +5,7 @@ from django.db import models
 from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes, Designation)
+from tecdoc.models.car import CarType
 
 number_re = re.compile('[^a-zA-Z0-9]+')
 
@@ -45,10 +46,10 @@ class Part(TecdocModel):
                                     verbose_name=u'Обозначение',
                                     db_column='ART_COMPLETE_DES_ID')
 
-    car_types = models.ManyToManyField('tecdoc.CarType',
-                                       verbose_name=u'Модификации авто',
-                                       through='tecdoc.PartTypeGroupSupplier',
-                                       related_name='parts')
+    #car_types = models.ManyToManyField('tecdoc.CarType',
+    #                                   verbose_name=u'Модификации авто',
+    #                                   through='tecdoc.PartTypeGroupSupplier',
+    #                                   related_name='parts')
 
     groups = models.ManyToManyField('tecdoc.Group',
                                     verbose_name=u'Группа запчастей',
@@ -88,6 +89,9 @@ class Part(TecdocModel):
     def list_sections(self):
         groups = self.groups.distrint()
         return Section.objects.filter(groups__in=groups)
+
+    def list_car_types(self):
+        return CarType.objects.filter(parttypegroupsupplier__part__part=self).distinct()
 
 
 class GroupManager(TecdocManagerWithDes):
@@ -211,10 +215,10 @@ class PartTypeGroupSupplier(TecdocModel):
     # car_type, part, group and sort are primary key
     car_type = models.ForeignKey('tecdoc.CarType',
                                  verbose_name=u'Модификация модели',
-                                 db_column='LAT_TYP_ID')
+                                 db_column='LAT_TYP_ID',
+                                 )
 
-    # XXX needed to PartGroup
-    part = models.ForeignKey(Part, verbose_name=u'Запчасть',
+    part = models.ForeignKey(PartGroup, verbose_name=u'Запчасть',
                              db_column='LAT_LA_ID')
 
     group = models.ForeignKey(Group, verbose_name=u'Группа Запчастей',

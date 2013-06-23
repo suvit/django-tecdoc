@@ -171,6 +171,10 @@ class CarType(TecdocModel):
         return CarSection.objects.filter(parent=parent,
                                          groups__parts__car_types=self).distinct()
 
+    def list_parts(self):
+        from tecdoc.models.part import Part
+        return Part.objects.filter(partgroup__parttypegroupsupplier__car_type=self).distinct()
+
 
 class CarTypeEngine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
