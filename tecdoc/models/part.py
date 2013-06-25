@@ -28,6 +28,8 @@ class PartManager(TecdocManagerWithDes):
         if manufacturer:
             if isinstance(manufacturer, int):
                 query &= Q(part__supplier=manufacturer) | Q(brand=manufacturer)
+            elif hasattr(manufacturer, '__iter__'):
+                query &= Q(part__supplier__title__in=manufacturer) | Q(brand__title__in=manufacturer)
             else:
                 query &= Q(part__supplier__title=manufacturer) | Q(brand__title=manufacturer)
         return PartAnalog.objects.filter(query)
