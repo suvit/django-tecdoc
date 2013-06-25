@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -
 import re
 from django.db import models
+from django.db.models import Q
 
 from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
@@ -23,7 +24,13 @@ class PartManager(TecdocManagerWithDes):
         return query
 
     def lookup(self, number, manufacturer=None):
-        return PartAnalog.objects.filter(search_number=clean_number(number))
+        query = Q(search_number=clean_number(number))
+        if manufacturer:
+            if isinstance(manufacturer, int):
+                query &= Q(part__supplier=manufacturer) | Q(brand=manufacturer)
+            else:
+                query &= Q(part__supplier__title=manufacturer) | Q(brand__title=manufacturer)
+        return PartAnalog.objects.filter(query)
 
 
 class Part(TecdocModel):
@@ -260,6 +267,7 @@ class PartAnalog(TecdocModel):
 
     brand = models.ForeignKey('tecdoc.Brand',
                               verbose_name=u'Производитель',
+                              null=True, blank=True,
                               db_column='ARL_BRA_ID')
 
     sorting = models.IntegerField(u'Порядок', db_column='ARL_SORT')
