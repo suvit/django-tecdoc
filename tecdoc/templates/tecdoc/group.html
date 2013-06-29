@@ -1,5 +1,7 @@
 {% extends 'tecdoc/base.html'%}
 
+{% load url from future %}
+
 {% block content %}
 <div class="part">
 {% load pagination_tags %}
@@ -7,7 +9,7 @@
 
 {% load pagination_tags %}
 {% autopaginate object.parts.distinct.all %}
-<h2>Запчасти</h2>
+<h2>Запчасти ({{page_obj.paginator.count}})</h2>
 <ul>
 {% for part in page_obj %}
 <li><a href="{% url 'part' part.id %}">{{ part }}</a></li>
@@ -15,7 +17,7 @@
 </ul>
 {% paginate %}
 
-<h2>Категории</h2>
+<h2>Категории ({{object.sections.count}})</h2>
 <ul>
 {% for category in object.sections.all %}
 <li><a href="{% url 'category_tree' category.id %}">{{ category }}</a></li>

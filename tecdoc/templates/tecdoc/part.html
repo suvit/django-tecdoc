@@ -6,6 +6,12 @@
 <div class="part">
 {% load pagination_tags %}
 <h2>{{ part }}</h2>
+<ul>
+  {% for image in part.images.all %}
+    <li><img src="{{image.absolute_path}}" /></li>
+  {% endfor %}
+</ul>
+
 
 <h3>Входит в группы</h3>
 <ul>
@@ -24,7 +30,7 @@
 <h3>Модели</h3>
 <ul>
 {% load pagination_tags %}
-{% autopaginate part.car_types.all %}
+{% autopaginate part.list_car_types.all %}
 {% for car_type in page_obj %}
 <li><a href="{% url 'car_type' car_type.id %}">{{ car_type }}</a></li>
 {% endfor %}
