@@ -6,6 +6,8 @@ from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes, Designation)
 
+from tecdoc.models.part import Part, Group
+
 
 class RootSection(object):
     id = None
@@ -75,13 +77,12 @@ class CarSection(TecdocModel):
         return CarSection.objects.filter(id__in=parents).order_by('level')
 
     def get_parts(self, car_type=None):
-        from tecdoc.models.part import Part
         return Part.objects.filter(groups__sections=self).distinct()
 
-    """
     def get_groups(self):
         return Group.objects.filter(sections=self)
 
+    """
     def lookup_by_number(self, manufacturers=None):
         query = Part.objects.filter(lookup=self)
 

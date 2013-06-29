@@ -6,8 +6,6 @@ from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
 
-from tecdoc.models.category import CarSection
-
 
 class CarModelManager(TecdocManagerWithDes):
 
@@ -168,6 +166,7 @@ class CarType(TecdocModel):
                                )
 
     def list_categories(self, parent=10001):
+        from tecdoc.models.category import CarSection
         return CarSection.objects.filter(parent=parent,
                                          groups__parttypegroupsupplier__car_type=self).distinct()
 
