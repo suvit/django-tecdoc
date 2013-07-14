@@ -165,10 +165,12 @@ class CarType(TecdocModel):
                                 self.production_start, self.production_end or u'н.д.'
                                )
 
-    def list_categories(self, parent=10001):
+    def list_categories(self, parent=0):
         from tecdoc.models.category import CarSection
-        return CarSection.objects.filter(parent=parent,
-                                         groups__parttypegroupsupplier__car_type=self).distinct()
+        filters = {'groups__parttypegroupsupplier__car_type': self}
+        if parent != 0:
+            filters['parent'] = parent
+        return CarSection.objects.filter(**filters).distinct()
 
     def list_parts(self):
         from tecdoc.models.part import Part
