@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -
 import re
+
+from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
@@ -9,7 +11,10 @@ from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes, Designation)
 from tecdoc.models.car import CarType
 
+CACHE_PREFIX = settings.CACHE_MIDDLEWARE_KEY_PREFIX
+
 number_re = re.compile('[^a-zA-Z0-9]+')
+
 
 def clean_number(number):
     return number_re.sub('', number)
@@ -106,13 +111,13 @@ class Part(TecdocModel):
     def get_images(self):
         """Returns all images of the product, including the main image.
         """
-        cache_key = "%s-tecdoc-product-images-%s" % (CACHE_PREFIX, self.id)
+        cache_key = "%s-tecdoc-product-%s-images" % (CACHE_PREFIX, self.id)
         images = cache.get(cache_key)
 
         if images is not None:
             return images
 
-        images = object.images.all()
+        images = self.images.all()
         cache.set(cache_key, images)
 
         return images
@@ -121,7 +126,7 @@ class Part(TecdocModel):
         """Returns the first image (the main image) of the product.
         """
         try:
-            return self.get_images()[0].image
+            return self.get_images()[0]
         except IndexError:
             return None
 

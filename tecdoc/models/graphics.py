@@ -5,8 +5,8 @@ from tecdoc.conf import TecdocConf as tdsettings
 from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
 
-
 PDF_TYPE = 2
+
 
 class FileType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
