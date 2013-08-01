@@ -81,10 +81,10 @@ class Part(TecdocModel):
                                     through='tecdoc.PartImage',
                                     related_name='parts')
 
-    #pdfs = models.ManyToManyField('tecdoc.PdfFile',
-    #                              verbose_name=u'Инструкция',
-    #                              through='tecdoc.PartImage',
-    #                              related_name='parts') 
+    pdfs = models.ManyToManyField('tecdoc.PdfFile',
+                                  verbose_name=u'Инструкция',
+                                  through='tecdoc.PartPdf',
+                                  related_name='parts')
 
     objects = PartManager()
 

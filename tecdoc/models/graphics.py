@@ -6,6 +6,8 @@ from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
 
 
+PDF_TYPE = 2
+
 class FileType(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='DOC_TYPE')
@@ -23,9 +25,11 @@ class File(TecdocModel):
     type = models.ForeignKey(FileType, verbose_name=u'Тип',
                              db_column='GRA_DOC_TYPE')
 
-    db_number = models.IntegerField(u'Категория 1', db_column='GRA_TAB_NR')
+    db_number = models.IntegerField(u'Номер диска', db_column='GRA_TAB_NR')
 
     filename = models.IntegerField(u'Имя файла', db_column='GRA_GRD_ID')
+
+    lang = models.IntegerField(u'Язык', db_column='GRA_LNG_ID')
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'GRAPHICS'
@@ -35,8 +39,18 @@ class File(TecdocModel):
     url = absolute_url
 
 
-# TODO limit to img doc type
+class ImageManager(TecdocManager):
+    def get_query_set(self, *args, **kwargs):
+        return (super(ImageManager, self).get_query_set(*args, **kwargs)
+                                         .filter(lang__in=(tdsettings.LANG_ID, 255))
+                                         .exclude(type=PDF_TYPE)
+                                               )
+
+
 class Image(File):
+
+    objects = ImageManager()
+
     class Meta(File.Meta):
         proxy = True
 
@@ -47,7 +61,6 @@ class Image(File):
                                     ext == 'jp2' and 'jpg' or ext)
 
 
-# TODO Make link to File
 class PartImage(TecdocModel):
 
     part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
@@ -60,10 +73,32 @@ class PartImage(TecdocModel):
         db_table = tdsettings.DB_PREFIX + 'LINK_GRA_ART'
 
 
-# TODO limit to pdf doc type
+class PdfManager(TecdocManager):
+    def get_query_set(self, *args, **kwargs):
+        return (super(PdfManager, self).get_query_set(*args, **kwargs)
+                                       .filter(lang__in=(tdsettings.LANG_ID, 255),
+                                               type=PDF_TYPE)
+               )
+
+
 class PdfFile(File):
+
+    objects = PdfManager()
+
     class Meta(File.Meta):
         proxy = True
 
     def relative_url(self):
-        return '/pdf/000%s.pdf' % (self.filename,)
+        return '/pdf/%s%s.pdf' % (self.id, str(self.lang).zfill(3))
+
+
+class PartPdf(TecdocModel):
+
+    part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
+                             db_column='LGA_ART_ID')
+
+    pdf = models.ForeignKey(PdfFile, verbose_name=u'Документация',
+                            db_column='LGA_GRA_ID')
+
+    class Meta(TecdocModel.Meta):
+        db_table = tdsettings.DB_PREFIX + 'LINK_GRA_ART'
