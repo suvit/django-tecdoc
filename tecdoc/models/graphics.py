@@ -30,8 +30,9 @@ class File(TecdocModel):
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'GRAPHICS'
 
-    def absolute_path(self):
-        return '%s%s' % (tdsettings.FILE_HOST, self.relative_path())
+    def absolute_url(self):
+        return '%s%s' % (tdsettings.FILE_HOST, self.relative_url())
+    url = absolute_url
 
 
 # TODO limit to img doc type
@@ -39,7 +40,7 @@ class Image(File):
     class Meta(File.Meta):
         proxy = True
 
-    def relative_path(self):
+    def relative_url(self):
         ext = self.type.ext.lower()
         return 'images/%s/%s.%s' % (self.db_number,
                                     self.filename,
@@ -64,5 +65,5 @@ class PdfFile(File):
     class Meta(File.Meta):
         proxy = True
 
-    def relative_path(self):
+    def relative_url(self):
         return '/pdf/000%s.pdf' % (self.filename,)

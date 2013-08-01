@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -
 import re
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
 
@@ -101,6 +102,33 @@ class Part(TecdocModel):
 
     def list_car_types(self):
         return CarType.objects.filter(parttypegroupsupplier__part__part=self).distinct()
+
+    def get_images(self):
+        """Returns all images of the product, including the main image.
+        """
+        cache_key = "%s-tecdoc-product-images-%s" % (CACHE_PREFIX, self.id)
+        images = cache.get(cache_key)
+
+        if images is not None:
+            return images
+
+        images = object.images.all()
+        cache.set(cache_key, images)
+
+        return images
+
+    def get_image(self):
+        """Returns the first image (the main image) of the product.
+        """
+        try:
+            return self.get_images()[0].image
+        except IndexError:
+            return None
+
+    def get_sub_images(self):
+        """Returns all images of the product, except the main image.
+        """
+        return self.get_images()[1:]
 
 
 class GroupManager(TecdocManagerWithDes):

@@ -43,7 +43,7 @@
 {% for part in page_obj %}
 <li><a href="{% url 'part' part.id %}">{{ part }}</a>
   {% for image in part.images.all %}
-    <img src="{{image.absolute_path}}" />
+    <img src="{{image.url}}" />
   {% endfor %}
 </li>
 {% endfor %}

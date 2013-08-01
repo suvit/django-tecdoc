@@ -8,7 +8,7 @@
 <h2>{{ part }}</h2>
 <ul>
   {% for image in part.images.all %}
-    <li><img src="{{image.absolute_path}}" /></li>
+    <li><img src="{{image.url}}" /></li>
   {% endfor %}
 </ul>
 
