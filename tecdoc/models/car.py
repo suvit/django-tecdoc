@@ -97,8 +97,8 @@ class CarTypeManager(TecdocManagerWithDes):
 
     def get_query_set(self, *args, **kwargs):
         return (super(CarTypeManager, self).get_query_set(*args, **kwargs)
-                                           .filter(model__designation__lang=16,
-                                                   full_designation__lang=16)
+                                           .filter(model__designation__lang=tdsettings.LANG_ID,
+                                                   full_designation__lang=tdsettings.LANG_ID)
                                            .select_related('model__manufacturer',
                                                            'model__designation__description',
                                                            'full_designation__description',
