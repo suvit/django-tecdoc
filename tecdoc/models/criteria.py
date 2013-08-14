@@ -6,6 +6,14 @@ from tecdoc.models.base import (TecdocModel, TecdocManager,
                                 TecdocManagerWithDes)
 
 
+class CriteriaManager(TecdocManagerWithDes):
+    def get_query_set(self, *args, **kwargs):
+        query = super(CriteriaManager, self).get_query_set(*args, **kwargs)
+        query = query.filter(short_designation__lang=tdsettings.LANG_ID)
+        return query.select_related('designation__description',
+                                    'short_designation__description')
+
+
 class Criteria(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='CRI_ID')
@@ -45,7 +53,7 @@ class Criteria(TecdocModel):
                               db_column='CRI_SUCCESSOR',
                               related_name='parents')
 
-    objects = TecdocManagerWithDes()
+    objects = CriteriaManager()
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'CRITERIA'
