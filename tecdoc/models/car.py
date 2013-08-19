@@ -89,6 +89,26 @@ class Engine(TecdocModel):
     production_end = models.IntegerField(u'Конец производства',
                                       db_column='ENG_PCON_END')
 
+    power_kw_from = models.IntegerField(u'Мощность двигателя (кВт): ОТ',
+                                        db_column='ENG_KW_FROM',
+                                        blank=True, null=True)
+    power_kw_upto = models.IntegerField(u'Мощность двигателя (кВт): До',
+                                        db_column='ENG_KW_UPTO',
+                                        blank=True, null=True)
+    power_hp_from = models.IntegerField(u'Мощность двигателя (л.с.): ОТ',
+                                        db_column='ENG_HP_FROM',
+                                        blank=True, null=True)
+    power_hp_upto = models.IntegerField(u'Мощность двигателя (л.с.): До',
+                                        db_column='ENG_HP_UPTO',
+                                        blank=True, null=True)
+
+    fuel_des = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Кузов',
+                                 db_column='ENG_KV_FUEL_TYPE_DES_ID',
+                                 related_name='+'
+                                 )
+
+
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'ENGINES'
 
@@ -154,6 +174,28 @@ class CarType(TecdocModel):
                                         db_column='TYP_HP_UPTO',
                                         blank=True, null=True)
 
+    engine_des = models.ForeignKey('tecdoc.Designation',
+                                   verbose_name=u'Двигатель',
+                                   db_column='TYP_KV_ENGINE_DES_ID',
+                                   related_name='+'
+                                   )
+    body_des = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Кузов',
+                                 db_column='TYP_KV_BODY_DES_ID',
+                                 related_name='+'
+                                 )
+    fuel_des = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Кузов',
+                                 db_column='TYP_KV_FUEL_DES_ID',
+                                 related_name='+'
+                                 )
+
+    drive_des = models.ForeignKey('tecdoc.Designation',
+                                 verbose_name=u'Привод',
+                                 db_column='TYP_KV_DRIVE_DES_ID',
+                                 related_name='+'
+                                 )
+
     objects = CarTypeManager()
 
     class Meta(TecdocModel.Meta):
@@ -162,8 +204,18 @@ class CarType(TecdocModel):
 
     def __unicode__(self):
         return u'%s (%s-%s)' % (self.full_designation,
-                                self.production_start, self.production_end or u'н.д.'
+                                self.get_production_start(), self.get_production_end()
                                )
+
+    def get_production_start(self):
+        start = divmod(self.production_start, 100)
+        return u'%02d.%d' % (start[1], start[0])
+
+    def get_production_end(self):
+        if self.production_end is None:
+            return u'н.д.'
+        end = divmod(self.production_end, 100)
+        return u'%02d.%d' % (end[1], end[0])
 
     def list_categories(self, parent=0):
         from tecdoc.models.category import CarSection
@@ -178,12 +230,9 @@ class CarType(TecdocModel):
 
 
 class CarTypeEngine(TecdocModel):
-    id = models.AutoField(u'Ид', primary_key=True,
-                          db_column='LTE_TYP_ID')
-
-    car_type = models.ForeignKey(CarType,
+    car_type = models.ForeignKey(CarType, primary_key=True,
                                  verbose_name=u'Модификация модели',
-                                 db_column='LTE_NR')
+                                 db_column='LTE_TYP_ID')
 
     engine = models.ForeignKey(Engine,
                                verbose_name=u'Двигатель',
