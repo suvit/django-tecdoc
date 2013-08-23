@@ -74,6 +74,15 @@ class CarModel(TecdocModel):
         db_table = tdsettings.DB_PREFIX + 'MODELS'
 
 
+class EngineManager(TecdocManager):
+    def get_query_set(self, *args, **kwargs):
+        return (super(EngineManager, self).get_query_set(*args, **kwargs)
+                                          .filter(fuel_des__lang=tdsettings.LANG_ID)
+                                          .select_related('manufacturer',
+                                                          'fuel_des__description')
+               )
+
+
 class Engine(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='ENG_ID')
@@ -108,6 +117,7 @@ class Engine(TecdocModel):
                                  related_name='+'
                                  )
 
+    objects = EngineManager()
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'ENGINES'
@@ -118,11 +128,16 @@ class CarTypeManager(TecdocManagerWithDes):
     def get_query_set(self, *args, **kwargs):
         return (super(CarTypeManager, self).get_query_set(*args, **kwargs)
                                            .filter(model__designation__lang=tdsettings.LANG_ID,
-                                                   full_designation__lang=tdsettings.LANG_ID)
+                                                   full_designation__lang=tdsettings.LANG_ID,
+                                                   drive_des__lang=tdsettings.LANG_ID,
+                                                   body_des__lang=tdsettings.LANG_ID)
                                            .select_related('model__manufacturer',
                                                            'model__designation__description',
                                                            'full_designation__description',
-                                                           'designation__description')
+                                                           'designation__description',
+                                                           'drive_des__description',
+                                                           'body_des__description')
+                                           .prefetch_related('engines')
                )
 
 

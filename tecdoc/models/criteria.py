@@ -71,6 +71,15 @@ class Criteria(TecdocModel):
         return self.short_designation or self.designation
 
 
+class PartCriteriaManager(TecdocManagerWithDes):
+    def get_query_set(self, *args, **kwargs):
+        query = super(PartCriteriaManager, self).get_query_set(*args, **kwargs)
+        query = query.filter(criteria__short_designation__lang=tdsettings.LANG_ID,
+                             criteria__designation__lang=tdsettings.LANG_ID)
+        return query.select_related('designation__description',
+                                    'criteria')
+
+
 class PartCriteria(TecdocModel):
     # XXX not a primary key
     part = models.ForeignKey('tecdoc.Part', verbose_name=u'Запчасть',
@@ -97,7 +106,7 @@ class PartCriteria(TecdocModel):
                                   db_column='ACR_DISPLAY')
 
     # XXX join remove rows with ACR_KV_DES_ID==0
-    objects = TecdocManagerWithDes()
+    objects = PartCriteriaManager()
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'ARTICLE_CRITERIA'
