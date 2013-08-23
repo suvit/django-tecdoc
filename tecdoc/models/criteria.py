@@ -77,7 +77,8 @@ class PartCriteriaManager(TecdocManagerWithDes):
         query = query.filter(criteria__short_designation__lang=tdsettings.LANG_ID,
                              criteria__designation__lang=tdsettings.LANG_ID)
         return query.select_related('designation__description',
-                                    'criteria')
+                                    'criteria__short_designation__description',
+                                    'criteria__designation__description')
 
 
 class PartCriteria(TecdocModel):
