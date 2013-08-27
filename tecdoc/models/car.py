@@ -131,7 +131,8 @@ class CarTypeManager(TecdocManagerWithDes):
                                            .filter(model__designation__lang=tdsettings.LANG_ID,
                                                    full_designation__lang=tdsettings.LANG_ID,
                                                    drive_des__lang=tdsettings.LANG_ID,
-                                                   body_des__lang=tdsettings.LANG_ID)
+                                                   body_des__lang=tdsettings.LANG_ID,
+                                                   designation__description__text__isnull=False)
                                            .select_related('model__manufacturer',
                                                            'model__designation__description',
                                                            'full_designation__description',

@@ -39,7 +39,8 @@ class Text(TecdocModel):
     id = models.AutoField(u'Ид', primary_key=True,
                           db_column='TMT_ID')
 
-    text = models.TextField(u'Текст', db_column='TMT_TEXT')
+    text = models.TextField(u'Текст', db_column='TMT_TEXT',
+                            null=True)
 
     class Meta(TecdocModel.Meta):
         db_table = tdsettings.DB_PREFIX + 'TEXT_MODULE_TEXTS'
