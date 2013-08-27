@@ -86,7 +86,7 @@ class DesignationBase(TecdocModel):
         abstract = True
 
     def __unicode__(self):
-        return self.description.text
+        return self.description.text or u'-'
 
 
 class TextModule(DesignationBase):

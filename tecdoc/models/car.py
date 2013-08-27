@@ -13,6 +13,7 @@ class CarModelManager(TecdocManagerWithDes):
         return (super(CarModelManager, self).get_query_set(*args, **kwargs)
                                             .select_related('manufacturer',
                                                             'designation__description')
+                                            .distinct()
                )
 
     def get_models(self, manufacturer, date_min=None, date_max=None,
