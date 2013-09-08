@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -
 
+from django.core.cache import cache
 from django.db import models
 
 from tecdoc.conf import TecdocConf as tdsettings
@@ -236,14 +237,30 @@ class CarType(TecdocModel):
 
     def list_categories(self, parent=0):
         from tecdoc.models.category import CarSection
+
+        cache_key = 'tecdoc-car-%s-cats-parent-%s' % (self.id, parent)
+
+        res = cache.get(cache_key)
+        if res:
+            return res
+
         filters = {'groups__parttypegroupsupplier__car_type': self}
         if parent != 0:
             filters['parent'] = parent
-        return CarSection.objects.filter(**filters).distinct()
+        res = CarSection.objects.filter(**filters).distinct()
+        cache.set(cache_key, res, tdsettings.CACHE_TIMEOUT)
+        return res
 
     def list_parts(self):
         from tecdoc.models.part import Part
-        return Part.objects.filter(partgroup__parttypegroupsupplier__car_type=self).distinct()
+        cache_key = 'tecdoc-car-%s-parts' % self.id
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        res = Part.objects.filter(partgroup__parttypegroupsupplier__car_type=self).distinct()
+        cache.set(cache_key, res, tdsettings.CACHE_TIMEOUT)
+        return res
 
 
 class CarTypeEngine(TecdocModel):

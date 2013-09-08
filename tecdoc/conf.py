@@ -16,3 +16,5 @@ class TecdocConf(AppConf):
 
     # Host for generation absolute path for images and pdf
     FILE_HOST = 'http://server/'
+
+    CACHE_TIMEOUT = 60 * 60  # one hour
